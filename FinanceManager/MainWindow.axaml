@@ -1,0 +1,27 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="FinanceManager.MainWindow"
+        Title="FinanceManager"
+        Width="500"
+		Height="500">
+    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*" ShowGridLines="true">
+        <StackPanel x:Name="LoginPanel" Grid.Column="1" Grid.Row="1" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+            <TextBlock Text="Sign in" HorizontalAlignment="2"/>
+            <TextBox Watermark="Name"/>
+            <TextBox Watermark="Password"/>
+            <Button Content="Login" HorizontalAlignment="2"/>
+            <Button Content="Register" HorizontalAlignment="2" Click="RegisterButton"/>
+        </StackPanel>
+        <StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+            <TextBlock Text="Register" HorizontalAlignment="2"/>
+            <TextBox Watermark="Name"/>
+            <TextBox Watermark="Email"/>
+            <TextBox Watermark="Password"/>
+            <Button Content="Register" HorizontalAlignment="2"/>
+            <Button Content="Cancel" HorizontalAlignment="2" Click="CancelRegisterButton"/>
+        </StackPanel>
+    </Grid>
+</Window>
