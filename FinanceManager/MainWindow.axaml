@@ -2,26 +2,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:vm="using:FinanceManager.MainViewModel"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="FinanceManager.MainWindow"
+		x:DataType="vm:MainViewModel"
         Title="FinanceManager"
         Width="500"
 		Height="500">
-    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*" ShowGridLines="true">
-        <StackPanel x:Name="LoginPanel" Grid.Column="1" Grid.Row="1" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
-            <TextBlock Text="Sign in" HorizontalAlignment="2"/>
-            <TextBox Watermark="Name"/>
-            <TextBox Watermark="Password"/>
-            <Button Content="Login" HorizontalAlignment="2"/>
-            <Button Content="Register" HorizontalAlignment="2" Click="RegisterButton"/>
+    <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*,*,*,*" ShowGridLines="true">
+        <StackPanel x:Name="LoginPanel" Grid.Column="2" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+			<TextBlock Text="Вход" HorizontalAlignment="2" VerticalAlignment="2" FontSize="24"/>
+            <TextBox Watermark="Имя"/>
+            <TextBox Watermark="Пароль"/>
+            <Button Content="Войти" HorizontalAlignment="2" VerticalAlignment="2"/>
+            <Button Content="Создать" HorizontalAlignment="2" Click="RegisterButton"/>
         </StackPanel>
-        <StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
-            <TextBlock Text="Register" HorizontalAlignment="2"/>
-            <TextBox Watermark="Name"/>
-            <TextBox Watermark="Email"/>
-            <TextBox Watermark="Password"/>
-            <Button Content="Register" HorizontalAlignment="2"/>
-            <Button Content="Cancel" HorizontalAlignment="2" Click="CancelRegisterButton"/>
+        <StackPanel x:Name="RegisterPanel" Grid.Column="2" Grid.Row="2" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+            <TextBlock Text="Создать" HorizontalAlignment="2" FontSize="24"/>
+            <TextBox Watermark="Имя"/>
+            <TextBox Watermark="Почта"/>
+            <TextBox Watermark="Пароль"/>
+            <Button Content="Зарегистрироваться" HorizontalAlignment="2"/>
+            <Button Content="Отмена" HorizontalAlignment="2" Click="CancelRegisterButton"/>
         </StackPanel>
+		<StackPanel x:Name="HomePage" Grid.Column="2" Grid.Row="2" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+			<TextBlock Text="Главная" HorizontalAlignment="2" FontSize="24"/>
+		</StackPanel>
     </Grid>
 </Window>
