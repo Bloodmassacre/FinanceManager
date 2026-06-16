@@ -76,19 +76,19 @@ namespace FinanceManager.MainViewModel
         }
         public bool LoginPageVisible
         {
-            get { return _homePageVisible; }
+            get { return _loginPageVisible; }
             set
             {
-                _homePageVisible = value;
+                _loginPageVisible = value;
                 OnPropertyChanged();
             }
         }
         public bool RegisterPageVisible
         {
-            get { return _homePageVisible; }
+            get { return _registerPageVisible; }
             set
             {
-                _homePageVisible = value;
+                _registerPageVisible = value;
                 OnPropertyChanged();
             }
         }
@@ -100,10 +100,10 @@ namespace FinanceManager.MainViewModel
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
-        public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login);
+        public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public void OnLogin()
         {
-            userRepository.Login(Email, Password);
+            userRepository.Login(Login, Password);
             HomePageVisible = true;
             LoginPageVisible = false;
             OnPropertyChanged(nameof(HomePageVisible));
@@ -116,7 +116,6 @@ namespace FinanceManager.MainViewModel
             RegisterPageVisible = false;
             OnPropertyChanged(nameof(HomePageVisible));
             OnPropertyChanged(nameof(RegisterPageVisible));
-
         }
     }
 }

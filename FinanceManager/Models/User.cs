@@ -15,7 +15,7 @@ namespace FinanceManager.Models
         private string _password;
         public string Currency = "RUB"; // Валюта
         public DateTime CreatedAt = DateTime.Now;
-        public decimal Balance = 0; 
+        public int Balance = 0; 
         public string Password
         {
             get { return _password; }

@@ -9,7 +9,7 @@ namespace FinanceManager.Models
     public class Income // Доход
     {
         public int Id { get; set; }
-        public decimal Amount { get; set; }
+        public int Amount { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public string Source { get; set; } // Источник дохода

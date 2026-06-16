@@ -13,5 +13,7 @@ namespace FinanceManager.Models
         public decimal SpentAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+
     }
+
 }

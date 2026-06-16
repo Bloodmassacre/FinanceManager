@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using FinanceManager.MainViewModel;
 
 namespace FinanceManager
 {
@@ -8,6 +9,7 @@ namespace FinanceManager
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new FinanceManager.MainViewModel.MainViewModel();
         }
         public void RegisterButton(object? sender, RoutedEventArgs e)
         {
