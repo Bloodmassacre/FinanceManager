@@ -10,9 +10,9 @@ namespace FinanceManager.Models
     {
         public int Id { get; set; }
         public int LimitAmount { get; set; }
-        public int SpentAmount { get; set; }
+        public int SpentAmount {  get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public bool IsOverBudget()
         {
             if (LimitAmount < SpentAmount)

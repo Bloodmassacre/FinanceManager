@@ -9,15 +9,15 @@
         Title="FinanceManager"
         Width="500"
 		Height="500">
-    <Grid RowDefinitions="*,*,*,*,*" ColumnDefinitions="*,*,*,*,*" ShowGridLines="true">
-        <StackPanel x:Name="LoginPanel" Grid.Column="2" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*" ShowGridLines="true">
+        <StackPanel x:Name="LoginPanel" Grid.Column="1" Grid.Row="1" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
 			<TextBlock Text="Вход" HorizontalAlignment="2" VerticalAlignment="2" FontSize="24"/>
             <TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Content="Войти" HorizontalAlignment="2" Command="{Binding LoginCommand}"/>
             <Button Content="Создать" HorizontalAlignment="2" Click="RegisterButton"/>
         </StackPanel>
-        <StackPanel x:Name="RegisterPanel" Grid.Column="2" Grid.Row="2" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+        <StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
             <TextBlock Text="Создать" HorizontalAlignment="2" FontSize="24"/>
             <TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Watermark="Почта" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -25,11 +25,22 @@
             <Button Content="Зарегистрироваться" HorizontalAlignment="2" Command="{Binding RegisterCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelRegisterButton"/>
         </StackPanel>
-		<StackPanel x:Name="HomePage" Grid.Column="2" Grid.Row="0" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+		<StackPanel x:Name="BudgetCreate" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+			<TextBlock Text="Бюджет" HorizontalAlignment="2" FontSize="23"/>
+			<TextBox Watermark="Размер бюджета"/>
+			<Button Content="Создать" HorizontalAlignment="2"/>
+		</StackPanel>
+		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
 			<TextBlock Text="Финансы" HorizontalAlignment="2" FontSize="23"/>
 		</StackPanel>
-        <StackPanel Grid.Column="0" Grid.Row="4" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
-            <Button Content="" HorizontalAlignment="2"/>
+        <StackPanel Grid.Column="0" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+			<Button Content="+ доход" HorizontalAlignment="2"/>
+			<Button Content="+ расход" HorizontalAlignment="2"/>
+			<Button Content="⚙ бюджет" HorizontalAlignment="2"/>
         </StackPanel>
+		<StackPanel Grid.Column="2" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
+			<Button Content="👁‍🗨 отчёт" HorizontalAlignment="2"/>
+			<Button Content="💾 отчёт" HorizontalAlignment="2"/>
+		</StackPanel>
     </Grid>
 </Window>
