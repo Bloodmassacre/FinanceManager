@@ -21,5 +21,26 @@ namespace FinanceManager.Models
             get { return _password; }
             set { _password = value; }
         }
+        public List<Transaction> Transactions = new List<Transaction>();
+        public int GetTotalIncome()
+        {
+            var Income = Transactions
+                .Where(x => x.transactionType == TransactionType.Income)
+                .Sum(x => x.Amount);
+            return Income;
+        }
+        public int GetTotalExpense()
+        {
+            var Expense = Transactions
+            .Where(x => x.transactionType == TransactionType.Expense)
+                .Sum(x => x.Amount);
+            return Expense;
+        }
+        public int CalculateBalance()
+        {
+            var Income = GetTotalIncome();
+            var Expense = GetTotalExpense();
+            return Balance = Income - Expense;
+        }
     }
 }

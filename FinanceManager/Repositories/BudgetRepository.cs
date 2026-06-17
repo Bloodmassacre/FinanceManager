@@ -15,16 +15,5 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public bool IsOverBudget(decimal limitamount, decimal spentamount)
-        {
-            if (limitamount < spentamount)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
     }
 }
