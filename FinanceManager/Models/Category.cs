@@ -14,7 +14,7 @@ namespace FinanceManager.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
-        public string Color { get; set; }
+        public string Color { get; set; } // Насколько большая трата
         public bool IsDefault { get; set; } // Основная ли категория
         public TransactionType TransactionType { get; set; }
         public List<Income> Incoming = new List<Income>();

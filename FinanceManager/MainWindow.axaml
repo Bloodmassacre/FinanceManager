@@ -34,13 +34,28 @@
 			<TextBlock Text="Финансы" HorizontalAlignment="2" FontSize="23"/>
 		</StackPanel>
         <StackPanel Grid.Column="0" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
-			<Button Content="+ доход" HorizontalAlignment="2"/>
-			<Button Content="+ расход" HorizontalAlignment="2"/>
+			<Button Content="+ доход" HorizontalAlignment="2" Click="AddIncomeButton"/>
+			<Button Content="+ расход" HorizontalAlignment="2" Click="AddExpenseButton"/>
 			<Button Content="⚙ бюджет" HorizontalAlignment="2"/>
         </StackPanel>
 		<StackPanel Grid.Column="2" Grid.Row="2" IsVisible="True" VerticalAlignment="2" HorizontalAlignment="2">
-			<Button Content="👁‍🗨 отчёт" HorizontalAlignment="2"/>
-			<Button Content="💾 отчёт" HorizontalAlignment="2"/>
+			<Button Content="См. отчёт" HorizontalAlignment="2"/>
+			<Button Content="Экспорт CSV" HorizontalAlignment="2"/>
 		</StackPanel>
+        <StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="0" Grid.Row="1">
+			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
+            <TextBox Watermark="Сумма"/>
+            <TextBox Watermark="Описание"/>
+            <Button Content="Создать" HorizontalAlignment="2"/>
+            <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
+        </StackPanel>
+        <StackPanel x:Name="AddExpensePage" IsVisible="False" Grid.Column="0" Grid.Row="1">
+			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
+            <TextBox Watermark="Сумма"/>
+            <TextBox Watermark="Описание"/>
+            <Button Content="Создать" HorizontalAlignment="2"/>
+            <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
+        </StackPanel>
+
     </Grid>
 </Window>

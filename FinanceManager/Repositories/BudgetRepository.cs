@@ -28,5 +28,19 @@ namespace FinanceManager.Repositories
             _db.SaveChanges();
             return budget;
         }
+        //public static string ChangeStatus()
+        //{
+        //    var budget = _db.Budget.FirstOrDefault();
+        //    int percent = budget.GetProgressPercent();
+        //    if (percent > 80)
+        //    {
+        //        budget.Status = "Warning";
+        //    }
+        //    if (budget.IsOverBudget() == true)
+        //    {
+        //        budget.Status = "Exceeded";
+        //    }
+        //    return budget.Status;
+        //}
     }
 }

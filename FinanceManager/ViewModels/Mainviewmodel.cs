@@ -126,6 +126,8 @@ namespace FinanceManager.ViewModels
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
+        public RelayCommand AddIncomeCommand { get; }
+        public RelayCommand AddExpenseCommand { get; }
         public MainViewModel()
         {
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
