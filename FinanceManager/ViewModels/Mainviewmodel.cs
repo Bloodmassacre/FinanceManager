@@ -9,20 +9,24 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Commands;
 
-namespace FinanceManager.MainViewModel
+namespace FinanceManager.ViewModels
 {
     public class MainViewModel
     {
         private readonly UserRepository userRepository = new UserRepository();
+        private readonly BudgetRepository budgetRepository = new BudgetRepository();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private int _userId;
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible;
-        private bool _registerPageVisible;
-        private bool _loginPageVisible;
+        private bool _homePageVisible = false;
+        private bool _registerPageVisible = false;
+        private bool _loginPageVisible = true;
+        private bool _budgetPageVisible = false;
+        private string _budgetCountString;
+        private int _budgetCount;
 
         public int UserId
         {
@@ -83,6 +87,15 @@ namespace FinanceManager.MainViewModel
                 OnPropertyChanged();
             }
         }
+        public bool BudgetPageVisible
+        {
+            get { return _budgetPageVisible; }
+            set
+            {
+                _budgetPageVisible = value;
+                OnPropertyChanged();
+            }
+        }
         public bool RegisterPageVisible
         {
             get { return _registerPageVisible; }
@@ -92,30 +105,64 @@ namespace FinanceManager.MainViewModel
                 OnPropertyChanged();
             }
         }
+        public string BudgetCountString
+        {
+            get { return _budgetCountString; }
+            set
+            {
+                _budgetCountString = value;
+                OnPropertyChanged();
+            }
+        }
+        public int BudgetCount
+        {
+            get { return _budgetCount; }
+            set
+            {
+                _budgetCount = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
+        public RelayCommand CreateBudgetCommand { get; }
         public MainViewModel()
         {
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
+            CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
+        public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
-            HomePageVisible = true;
             LoginPageVisible = false;
-            OnPropertyChanged(nameof(HomePageVisible));
             OnPropertyChanged(nameof(LoginPageVisible));
         }
         public void OnRegister()
         {
             userRepository.Register(Login, Password, Email);
-            HomePageVisible = true;
             RegisterPageVisible = false;
-            OnPropertyChanged(nameof(HomePageVisible));
             OnPropertyChanged(nameof(RegisterPageVisible));
+        }
+        public void OnCreateBudget()
+        {
+            try
+            {
+                BudgetCount = Convert.ToInt32(BudgetCountString);
+            }
+            catch { throw new Exception("Вы ввели некорректное число!"); }
+            if (BudgetCount <= 0)
+            {
+                throw new Exception("Вы ввели некорректное число!");
+            }
+            budgetRepository.AddBudget(BudgetCount);
+            BudgetPageVisible = false;
+            HomePageVisible = true;
+            OnPropertyChanged(nameof(BudgetPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
         }
     }
 }

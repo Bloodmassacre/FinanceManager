@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FinanceManager.Data;
+using FinanceManager.Enums;
+using FinanceManager.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinanceManager.Models;
-using FinanceManager.Data;
 
 namespace FinanceManager.Repositories
 {
@@ -14,6 +15,18 @@ namespace FinanceManager.Repositories
         public BudgetRepository()
         {
 
+        }
+        public Budget AddBudget(int budgetCount)
+        {
+            var budget = new Budget()
+            {
+                LimitAmount = budgetCount,
+                SpentAmount = 0,
+                StartDate = DateTime.Now
+            };
+            //_db.Budget.Add(budget);
+            _db.SaveChanges();
+            return budget;
         }
     }
 }
