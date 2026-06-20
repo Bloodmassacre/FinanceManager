@@ -23,15 +23,16 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = false;
+        private bool _homePageVisible = true;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = true;
+        private bool _loginPageVisible = false;
         private bool _budgetPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;
         private string _transactionAmountString;
         private string _transactionDescription;
         private int _transactionAmount;
+        private int _balance;
 
         public int UserId
         {
@@ -162,6 +163,15 @@ namespace FinanceManager.ViewModels
                 AddIncomeCommand.RaiseCanExecuteChanged();
             }
         }
+        public int Balance
+        {
+            get { return _balance; }
+            set
+            {
+                _balance = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -178,18 +188,22 @@ namespace FinanceManager.ViewModels
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
-        public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmount);
+        public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
             LoginPageVisible = false;
+            HomePageVisible = true;
             OnPropertyChanged(nameof(LoginPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
         }
         public void OnRegister()
         {
             userRepository.Register(Login, Password, Email);
             RegisterPageVisible = false;
+            BudgetPageVisible = true;
             OnPropertyChanged(nameof(RegisterPageVisible));
+            OnPropertyChanged(nameof(BudgetPageVisible));
         }
         public void OnCreateBudget()
         {
