@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FinanceManager.Models
 {
-    public abstract class Transaction
+    public class Transaction
     {
         public Guid Id { get; set; }
         public int Amount { get; set; }

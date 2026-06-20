@@ -15,6 +15,8 @@ namespace FinanceManager.ViewModels
     {
         private readonly UserRepository userRepository = new UserRepository();
         private readonly BudgetRepository budgetRepository = new BudgetRepository();
+        private readonly ExpenseRepository expenseRepository = new ExpenseRepository();
+        private readonly IncomeRepository incomeRepository = new IncomeRepository();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private int _userId;
@@ -27,6 +29,9 @@ namespace FinanceManager.ViewModels
         private bool _budgetPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;
+        private string _transactionAmountString;
+        private string _transactionDescription;
+        private int _transactionAmount;
 
         public int UserId
         {
@@ -112,6 +117,7 @@ namespace FinanceManager.ViewModels
             {
                 _budgetCountString = value;
                 OnPropertyChanged();
+                CreateBudgetCommand.RaiseCanExecuteChanged();
             }
         }
         public int BudgetCount
@@ -121,6 +127,39 @@ namespace FinanceManager.ViewModels
             {
                 _budgetCount = value;
                 OnPropertyChanged();
+            }
+        }
+        public string TransactionAmountString
+        {
+            get { return _transactionAmountString; }
+            set
+            {
+                _transactionAmountString = value;
+                OnPropertyChanged();
+                AddExpenseCommand.RaiseCanExecuteChanged();
+                AddIncomeCommand.RaiseCanExecuteChanged();
+
+            }
+        }
+        public int TransactionAmount
+        {
+            get { return _transactionAmount; }
+            set
+            {
+                _transactionAmount = value;
+                OnPropertyChanged();
+
+            }
+        }
+        public string TransactionDescription
+        {
+            get { return _transactionDescription; }
+            set
+            {
+                _transactionDescription = value;
+                OnPropertyChanged();
+                AddExpenseCommand.RaiseCanExecuteChanged();
+                AddIncomeCommand.RaiseCanExecuteChanged();
             }
         }
         public RelayCommand LoginCommand { get; }
@@ -133,10 +172,13 @@ namespace FinanceManager.ViewModels
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
+            AddIncomeCommand = new RelayCommand(OnAddIncome, () => CanAddTransaction);
+            AddExpenseCommand = new RelayCommand(OnAddExpense, () => CanAddTransaction);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
+        public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmount);
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
@@ -165,6 +207,32 @@ namespace FinanceManager.ViewModels
             HomePageVisible = true;
             OnPropertyChanged(nameof(BudgetPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
+        }
+        public void OnAddIncome()
+        {
+            try
+            {
+                BudgetCount = Convert.ToInt32(TransactionAmountString);
+            }
+            catch { throw new Exception("Вы ввели некорректное число!"); }
+            if (TransactionAmount <= 0)
+            {
+                throw new Exception("Вы ввели некорректное число!");
+            }
+            incomeRepository.AddIncome(TransactionAmount, TransactionDescription);
+        }
+        public void OnAddExpense()
+        {
+            try
+            {
+                TransactionAmount = Convert.ToInt32(TransactionAmountString);
+            }
+            catch { throw new Exception("Вы ввели некорректное число!"); }
+            if (TransactionAmount <= 0)
+            {
+                throw new Exception("Вы ввели некорректное число!");
+            }
+            expenseRepository.AddExpense(TransactionAmount, TransactionDescription);
         }
     }
 }

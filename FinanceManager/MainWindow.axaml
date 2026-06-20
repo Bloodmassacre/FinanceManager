@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:vm="using:FinanceManager.MainViewModel"
+		xmlns:vm="using:FinanceManager.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="FinanceManager.MainWindow"
 		x:DataType="vm:MainViewModel"
@@ -44,18 +44,17 @@
 		</StackPanel>
         <StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="0" Grid.Row="1">
 			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
-            <TextBox Watermark="Сумма"/>
-            <TextBox Watermark="Описание"/>
-            <Button Content="Создать" HorizontalAlignment="2"/>
+            <TextBox Watermark="Сумма" Text="{Binding TransactionAmount}"/>
+            <TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
+            <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddIncomeCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
         </StackPanel>
         <StackPanel x:Name="AddExpensePage" IsVisible="False" Grid.Column="0" Grid.Row="1">
 			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
-            <TextBox Watermark="Сумма"/>
-            <TextBox Watermark="Описание"/>
-            <Button Content="Создать" HorizontalAlignment="2"/>
+            <TextBox Watermark="Сумма" Text="{Binding TransactionAmount}"/>
+            <TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
+            <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddExpenseCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
         </StackPanel>
-
     </Grid>
 </Window>

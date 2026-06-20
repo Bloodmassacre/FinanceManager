@@ -1,23 +1,20 @@
 ﻿using FinanceManager.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace FinanceManager.Data
 {
-    class Database : DbContext
+    public class Database : DbContext
     {
         public DbSet<User> Users { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=database;Trusted_Connection = true");
+            optionsBuilder.UseNpgsql("Host=localhost;Database=FinanceDb;Username=postgres;Password=your_password");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
