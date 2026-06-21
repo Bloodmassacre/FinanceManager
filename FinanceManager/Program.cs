@@ -1,11 +1,10 @@
-﻿using System;
-using Avalonia;
-//using FinanceManager.Data;
-//using (var db = new Database())
-//{
-//    db.Database.EnsureCreated();
-//    Console.WriteLine("✅ База данных готова!");
-//}
+﻿using Avalonia;
+using FinanceManager.Data;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+
 namespace FinanceManager
 {
     internal class Program
@@ -14,7 +13,8 @@ namespace FinanceManager
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
         // yet and stuff might break.
         [STAThread]
-        public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        public static void Main(string[] args) => BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()

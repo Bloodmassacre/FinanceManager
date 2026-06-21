@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260620180447_Users")]
+    [Migration("20260621202354_Users")]
     partial class Users
     {
         /// <inheritdoc />
