@@ -19,12 +19,12 @@ namespace FinanceManager.Repositories
         public User Login(string username, string password)
         {
             var hash = PasswordHasher.Hash(password);
-            var existingUser = _db.Users.FirstOrDefault(s => s.Name == username);
-            if (existingUser != null)
+            var user = _db.Users.FirstOrDefault(s => s.Name == username);
+            if (user == null || !PasswordHasher.Verify(password, user.Password))
             {
-                return _db.Users.FirstOrDefault(u => u.Password == hash);
+                throw new Exception("Неверное имя или пароль!");
             }
-            throw new Exception("Неверное имя или пароль!");
+            return user;
         }
         public User Register(string username, string password, string email)
         {

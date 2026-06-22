@@ -17,7 +17,7 @@
             <Button Content="Войти" HorizontalAlignment="2" Command="{Binding LoginCommand}"/>
             <Button Content="Создать" HorizontalAlignment="2" Click="RegisterButton"/>
         </StackPanel>
-        <StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
+        <StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="{Binding RegisterPageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
             <TextBlock Text="Создать" HorizontalAlignment="2" FontSize="24"/>
             <TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Watermark="Почта" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

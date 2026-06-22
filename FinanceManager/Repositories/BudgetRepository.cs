@@ -24,23 +24,23 @@ namespace FinanceManager.Repositories
                 SpentAmount = 0,
                 StartDate = DateTime.Now
             };
-            //_db.Budget.Add(budget);
+            _db.Budgets.Add(budget);
             _db.SaveChanges();
             return budget;
         }
-        //public static string ChangeStatus()
-        //{
-        //    var budget = _db.Budget.FirstOrDefault();
-        //    int percent = budget.GetProgressPercent();
-        //    if (percent > 80)
-        //    {
-        //        budget.Status = "Warning";
-        //    }
-        //    if (budget.IsOverBudget() == true)
-        //    {
-        //        budget.Status = "Exceeded";
-        //    }
-        //    return budget.Status;
-        //}
+        public string ChangeStatus()
+        {
+            var budget = _db.Budgets.FirstOrDefault();
+            int percent = budget.GetProgressPercent();
+            if (percent > 80)
+            {
+                budget.Status = "Warning";
+            }
+            if (budget.IsOverBudget() == true)
+            {
+                budget.Status = "Exceeded";
+            }
+            return budget.Status;
+        }
     }
 }

@@ -13,5 +13,9 @@ namespace FinanceManager.Scripts
             string HashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             return HashedPassword;
         }
+        public static bool Verify(string password, string hash)
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hash);
+        }
     }
 }

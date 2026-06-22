@@ -25,7 +25,7 @@ namespace FinanceManager.Repositories
                 Date = DateTime.Now,
                 transactionType = TransactionType.Expense
             };
-            //_db.Expense.Add(income);
+            _db.Transactions.Add(expense);
             _db.SaveChanges();
             return expense;
         }

@@ -23,9 +23,9 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = true;
+        private bool _homePageVisible = false;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = false;
+        private bool _loginPageVisible = true;
         private bool _budgetPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;

@@ -15,10 +15,6 @@ namespace FinanceManager.Repositories
         {
 
         }
-        //public void GetTransactions()
-        //{
-
-        //}
         public Category AddCategory(string name, string icon, string color)
         {
             var category = new Category()
@@ -27,7 +23,7 @@ namespace FinanceManager.Repositories
                 Icon = icon,
                 Color = color
             };
-            //_db.Category.Add(category);
+            _db.Categories.Add(category);
             _db.SaveChanges();
             return category;
         }
