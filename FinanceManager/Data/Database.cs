@@ -30,6 +30,9 @@ namespace FinanceManager.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Transaction>()
+              .HasOne(t => t.Category)
+              .WithMany(c => c.Transactions);
         }
     }
 }

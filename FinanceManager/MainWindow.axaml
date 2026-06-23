@@ -46,17 +46,64 @@
 			<Button Content="Смотреть мес. отчёт" HorizontalAlignment="2"/>
 			<Button Content="Экспорт отчёта в CSV" HorizontalAlignment="2"/>
 		</StackPanel>
+        <StackPanel x:Name="HomePageButtons3" Grid.Column="0" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
+			<Button Content="Настроить категории" HorizontalAlignment="2"/>
+		</StackPanel>
+        <StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
+			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
+            <Button Content="Фильтр по категории" HorizontalAlignment="2" Command="{Binding SortByCategoryCommand}"/>
+		</StackPanel>
         <StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
 			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
             <TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
             <TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
+            <ComboBox PlaceholderText="Категория..." ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+                <ComboBox.ItemTemplate>
+                   <DataTemplate>
+                     <StackPanel Orientation="Horizontal">
+				       <TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
+				       <TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+			         </StackPanel>
+                   </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddIncomeCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
         </StackPanel>
+        <ListBox x:Name="HomePageCategoryList" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="1" IsVisible="{Binding HomePageVisible}">
+             <ListBox.ItemTemplate>
+               <DataTemplate>
+				   <StackPanel Orientation="Horizontal">
+				       <TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
+				       <TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+			         </StackPanel>
+			   </DataTemplate>
+             </ListBox.ItemTemplate>
+		    </ListBox>
+        <ListBox x:Name="HomePageTransactionList" ItemsSource="{Binding TransactionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="1" IsVisible="{Binding HomePageVisible}">
+             <ListBox.ItemTemplate>
+               <DataTemplate>
+				   <StackPanel Orientation="Horizontal">
+				       <TextBlock Text="{Binding Amount}" HorizontalAlignment="2"/>
+				       <TextBlock Text="{Binding Description}" HorizontalAlignment="2"/>
+			         </StackPanel>
+			   </DataTemplate>
+             </ListBox.ItemTemplate>
+		    </ListBox>
         <StackPanel x:Name="AddExpensePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
 			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
             <TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
             <TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
+            <ComboBox PlaceholderText="Категория..." ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+                <ComboBox.ItemTemplate>
+                   <DataTemplate>
+                     <StackPanel Orientation="Horizontal">
+				       <TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
+				       <TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+			         </StackPanel>
+                   </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddExpenseCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
         </StackPanel>

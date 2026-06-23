@@ -17,6 +17,7 @@ namespace FinanceManager.ViewModels
         private readonly BudgetRepository budgetRepository = new BudgetRepository();
         private readonly ExpenseRepository expenseRepository = new ExpenseRepository();
         private readonly IncomeRepository incomeRepository = new IncomeRepository();
+        private readonly TransactionRepository transactionRepository = new TransactionRepository();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private int _userId;
@@ -34,6 +35,9 @@ namespace FinanceManager.ViewModels
         private string _transactionDescription;
         private int _transactionAmount;
         private int _balance;
+        private string _icon;
+        private List<Category> _categoryList;
+        private List<Transaction> _transactionList;
 
         public int UserId
         {
@@ -182,11 +186,40 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public List<Category> CategoryList
+        {
+            get { return _categoryList; }
+            set
+            {
+                _categoryList = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<Transaction> TransactionList
+        {
+            get { return _transactionList; }
+            set
+            {
+                _transactionList = value;
+                OnPropertyChanged();
+            }
+        }
+        public string Icon
+        {
+            get { return _icon; }
+            set
+            {
+                _icon = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
         public RelayCommand AddIncomeCommand { get; }
         public RelayCommand AddExpenseCommand { get; }
+        public RelayCommand SortByCategoryCommand { get; }
+        public RelayCommand SortByDateCommand { get; }
         public MainViewModel()
         {
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
@@ -194,11 +227,14 @@ namespace FinanceManager.ViewModels
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
             AddIncomeCommand = new RelayCommand(OnAddIncome, () => CanAddTransaction);
             AddExpenseCommand = new RelayCommand(OnAddExpense, () => CanAddTransaction);
+            SortByCategoryCommand = new RelayCommand(OnSortByCategory, () => CanSort);
+            SortByDateCommand = new RelayCommand(OnSortByDate, () => CanSort);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
+        public bool CanSort => HomePageVisible == true;
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
@@ -257,6 +293,17 @@ namespace FinanceManager.ViewModels
                 throw new Exception("Вы ввели некорректное число!");
             }
             expenseRepository.AddExpense(TransactionAmount, TransactionDescription);
+        }
+        public void OnSortByCategory()
+        {
+            TransactionList = transactionRepository.SortByCategory();
+            OnPropertyChanged(nameof(TransactionList));
+
+        }
+        public void OnSortByDate()
+        {
+            TransactionList = transactionRepository.SortByDate();
+            OnPropertyChanged(nameof(TransactionList));
         }
     }
 }

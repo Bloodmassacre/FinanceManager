@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-
+using FinanceManager.Models;
+using FinanceManager.Data;
 namespace FinanceManager
 {
     public partial class MainWindow : Window
@@ -42,6 +43,8 @@ namespace FinanceManager
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
+            HomePageTransactionList.IsVisible = false;
+            HomePageCategoryList.IsVisible = false;
         }
         public void CloseBudgetSettingsButton(object? sender, RoutedEventArgs e)
         {
@@ -50,6 +53,8 @@ namespace FinanceManager
             HomePage.IsVisible = true;
             HomePageButtons.IsVisible = true;
             HomePageButtons2.IsVisible = true;
+            HomePageTransactionList.IsVisible = true;
+            HomePageCategoryList.IsVisible = true;
         }
     }
 }
