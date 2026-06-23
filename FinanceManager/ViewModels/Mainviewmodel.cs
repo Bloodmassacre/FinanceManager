@@ -23,10 +23,11 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = false;
+        private bool _homePageVisible = true;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = true;
+        private bool _loginPageVisible = false;
         private bool _budgetPageVisible = false;
+        private bool _budgetSettingsPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;
         private string _transactionAmountString;
@@ -169,6 +170,15 @@ namespace FinanceManager.ViewModels
             set
             {
                 _balance = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool BudgetSettingsPageVisible
+        {
+            get { return _budgetSettingsPageVisible; } 
+            set
+            {
+                _budgetSettingsPageVisible = value;
                 OnPropertyChanged();
             }
         }

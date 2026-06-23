@@ -35,6 +35,21 @@ namespace FinanceManager
             AddExpensePage.IsVisible = false;
             AddIncomePage.IsVisible = false;
         }
-
+        public void BudgetSettingsButton(object? sender, RoutedEventArgs e)
+        {
+            BudgetSettingsText.IsVisible = true;
+            BudgetSettingsPage.IsVisible = true;
+            HomePage.IsVisible = false;
+            HomePageButtons.IsVisible = false;
+            HomePageButtons2.IsVisible = false;
+        }
+        public void CloseBudgetSettingsButton(object? sender, RoutedEventArgs e)
+        {
+            BudgetSettingsPage.IsVisible = false;
+            BudgetSettingsText.IsVisible = false;
+            HomePage.IsVisible = true;
+            HomePageButtons.IsVisible = true;
+            HomePageButtons2.IsVisible = true;
+        }
     }
 }
