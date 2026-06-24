@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using FinanceManager.Commands;
+using FinanceManager.Data;
 
 namespace FinanceManager.ViewModels
 {
@@ -19,6 +18,7 @@ namespace FinanceManager.ViewModels
         private readonly IncomeRepository incomeRepository = new IncomeRepository();
         private readonly TransactionRepository transactionRepository = new TransactionRepository();
         private readonly CategoryRepository categoryRepository = new CategoryRepository();
+        private readonly Database _db = new Database();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private int _userId;
@@ -224,6 +224,8 @@ namespace FinanceManager.ViewModels
         public MainViewModel()
         {
             categoryRepository.AddDefault();
+            LoadCategories();
+            LoadTransactions();
 
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
@@ -238,6 +240,16 @@ namespace FinanceManager.ViewModels
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
         public bool CanSort => HomePageVisible == true;
+        public void LoadCategories()
+        {
+            CategoryList = _db.Categories.ToList();
+            OnPropertyChanged(nameof(CategoryList));
+        }
+        public void LoadTransactions()
+        {
+            TransactionList = _db.Transactions.ToList();
+            OnPropertyChanged(nameof(TransactionList));
+        }
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
