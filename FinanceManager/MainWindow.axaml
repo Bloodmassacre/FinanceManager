@@ -107,11 +107,11 @@
             <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddExpenseCommand}"/>
             <Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
         </StackPanel>
-        <StackPanel x:Name="BudgetSettingsText" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="0">
+        <StackPanel x:Name="BudgetSettingsText" IsVisible="{Binding BudgetSettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
 			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
         <TextBlock Text="бюджета" HorizontalAlignment="2" FontSize="23"/>
         </StackPanel>
-        <StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="1">
+        <StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
             <Button Content="Сохранить" HorizontalAlignment="2"/>
             <Button Content="Закрыть" HorizontalAlignment="2" Click="CloseBudgetSettingsButton"/>
         </StackPanel>
