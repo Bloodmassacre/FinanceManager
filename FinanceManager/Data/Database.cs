@@ -8,6 +8,7 @@ namespace FinanceManager.Data
     public class Database : DbContext
     {
 
+        // cd C:\Program Files\PostgreSQL\18\bin
         // Запуск: "C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe" start -D "C:\Program Files\PostgreSQL\18\data"
         // Выключение: "C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe" stop -D "C:\Program Files\PostgreSQL\18\data"
         // Перезапуск: "C:\Program Files\PostgreSQL\18\bin\pg_ctl.exe" restart -D "C:\Program Files\PostgreSQL\18\data"

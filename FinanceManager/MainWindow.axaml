@@ -47,7 +47,7 @@
 			<Button Content="Экспорт отчёта в CSV" HorizontalAlignment="2"/>
 		</StackPanel>
         <StackPanel x:Name="HomePageButtons3" Grid.Column="0" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Настроить категории" HorizontalAlignment="2"/>
+			<Button Content="Настроить категории" HorizontalAlignment="2" Click="CategorySettingsButton"/>
 		</StackPanel>
         <StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
 			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
@@ -111,9 +111,20 @@
 			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
         <TextBlock Text="бюджета" HorizontalAlignment="2" FontSize="23"/>
         </StackPanel>
-        <StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
+        <StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
             <Button Content="Сохранить" HorizontalAlignment="2"/>
-            <Button Content="Закрыть" HorizontalAlignment="2" Click="CloseBudgetSettingsButton"/>
+            <Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
         </StackPanel>
+		<StackPanel x:Name="CategorySettingsText" IsVisible="False" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
+			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
+			<TextBlock Text="категорий" HorizontalAlignment="2" FontSize="23"/>
+		</StackPanel>
+		<StackPanel x:Name="CategorySettingsPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+			<Button Content="Доб. категорию" HorizontalAlignment="2"/>
+			<Button Content="Удал. категорию" HorizontalAlignment="2"/>
+		</StackPanel>
+		<StackPanel x:Name="CategorySettingsButtons" IsVisible="False" Grid.Column="1" Grid.Row="2">
+			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
+		</StackPanel>
     </Grid>
 </Window>

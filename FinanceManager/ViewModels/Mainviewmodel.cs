@@ -18,6 +18,7 @@ namespace FinanceManager.ViewModels
         private readonly ExpenseRepository expenseRepository = new ExpenseRepository();
         private readonly IncomeRepository incomeRepository = new IncomeRepository();
         private readonly TransactionRepository transactionRepository = new TransactionRepository();
+        private readonly CategoryRepository categoryRepository = new CategoryRepository();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         private int _userId;
@@ -222,6 +223,8 @@ namespace FinanceManager.ViewModels
         public RelayCommand SortByDateCommand { get; }
         public MainViewModel()
         {
+            categoryRepository.AddDefault();
+
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);

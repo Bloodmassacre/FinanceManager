@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260622100608_InitialCreate")]
+    [Migration("20260624200712_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -128,7 +128,7 @@ namespace FinanceManager.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Date")
@@ -175,9 +175,13 @@ namespace FinanceManager.Migrations
 
             modelBuilder.Entity("FinanceManager.Models.Transaction", b =>
                 {
-                    b.HasOne("FinanceManager.Models.Category", null)
+                    b.HasOne("FinanceManager.Models.Category", "Category")
                         .WithMany("Transactions")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("FinanceManager.Models.Category", b =>

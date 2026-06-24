@@ -39,7 +39,7 @@ namespace FinanceManager
         public void BudgetSettingsButton(object? sender, RoutedEventArgs e)
         {
             BudgetSettingsText.IsVisible = true;
-            BudgetSettingsPage.IsVisible = true;
+            BudgetSettingsButtons.IsVisible = true;
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
@@ -48,10 +48,26 @@ namespace FinanceManager
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
         }
-        public void CloseBudgetSettingsButton(object? sender, RoutedEventArgs e)
+        public void CategorySettingsButton(object? sender, RoutedEventArgs e)
         {
-            BudgetSettingsPage.IsVisible = false;
+            CategorySettingsText.IsVisible = true;
+            CategorySettingsPage.IsVisible = true;
+            CategorySettingsButtons.IsVisible = true;
+            HomePage.IsVisible = false;
+            HomePageButtons.IsVisible = false;
+            HomePageButtons2.IsVisible = false;
+            HomePageButtons3.IsVisible = false;
+            HomePageButtons4.IsVisible = false;
+            HomePageTransactionList.IsVisible = false;
+            HomePageCategoryList.IsVisible = false;
+        }
+        public void CloseSettingsButton(object? sender, RoutedEventArgs e)
+        {
             BudgetSettingsText.IsVisible = false;
+            CategorySettingsButtons.IsVisible = false;
+            BudgetSettingsButtons.IsVisible = false;
+            CategorySettingsText.IsVisible = false;
+            CategorySettingsPage.IsVisible = false;
             HomePage.IsVisible = true;
             HomePageButtons.IsVisible = true;
             HomePageButtons2.IsVisible = true;
