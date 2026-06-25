@@ -68,6 +68,8 @@ namespace FinanceManager
             BudgetSettingsButtons.IsVisible = false;
             CategorySettingsText.IsVisible = false;
             CategorySettingsPage.IsVisible = false;
+            AddCategoryPage.IsVisible = false;
+            DeleteCategoryPage.IsVisible = false;
             HomePage.IsVisible = true;
             HomePageButtons.IsVisible = true;
             HomePageButtons2.IsVisible = true;
@@ -75,6 +77,16 @@ namespace FinanceManager
             HomePageButtons4.IsVisible = true;
             HomePageTransactionList.IsVisible = true;
             HomePageCategoryList.IsVisible = true;
+        }
+        public void AddCategoryButton(object? sender, RoutedEventArgs e)
+        {
+            CategorySettingsPage.IsVisible = false;
+            AddCategoryPage.IsVisible = true;
+        }
+        public void DeleteCategoryButton(object? sender, RoutedEventArgs e)
+        {
+            CategorySettingsPage.IsVisible = false;
+            DeleteCategoryPage.IsVisible = true;
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FinanceManager.ViewModels;
 
 namespace FinanceManager.Repositories
 {
@@ -43,13 +44,20 @@ namespace FinanceManager.Repositories
             _db.Categories.AddRange(categories);
             _db.SaveChanges();
         }
-        public Category AddCategory(string name, string icon, string color)
+        public Category AddCategory(string name, string icon, TransactionType transactionType)
         {
+            var existingUser = _db.Categories.FirstOrDefault(s => s.Name == name);
+            if (existingUser != null)
+            {
+                throw new Exception("Категория с таким именем уже существует!");
+            }
             var category = new Category()
             {
                 Name = name,
                 Icon = icon,
-                Color = color
+                Color = "Green",
+                IsDefault = false,
+                TransactionType = transactionType
             };
             _db.Categories.Add(category);
             _db.SaveChanges();

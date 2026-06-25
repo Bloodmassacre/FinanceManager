@@ -94,7 +94,7 @@
 			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
             <TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
             <TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
-            <ComboBox PlaceholderText="Категория..." ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+            <ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
                 <ComboBox.ItemTemplate>
                    <DataTemplate>
                      <StackPanel Orientation="Horizontal">
@@ -120,9 +120,31 @@
 			<TextBlock Text="категорий" HorizontalAlignment="2" FontSize="23"/>
 		</StackPanel>
 		<StackPanel x:Name="CategorySettingsPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<Button Content="Доб. категорию" HorizontalAlignment="2"/>
-			<Button Content="Удал. категорию" HorizontalAlignment="2"/>
+			<Button Content="Доб. категорию" HorizontalAlignment="2" Click="AddCategoryButton"/>
+			<Button Content="Удал. категорию" HorizontalAlignment="2" Click="DeleteCategoryButton"/>
 		</StackPanel>
+        <StackPanel x:Name="AddCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+            <TextBox Watermark="Название" Text="{Binding CategoryName}"/>
+            <TextBox Watermark="Иконка" Text="{Binding Icon}"/>
+            <StackPanel Orientation="Horizontal">
+                <RadioButton Content="Доход" IsChecked="{Binding IsIncomeChecked}"/>
+                <RadioButton Content="Расход" IsChecked="{Binding IsExpenseChecked}"/>
+            </StackPanel>
+            <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddCategoryCommand}"/>
+        </StackPanel>
+        <StackPanel x:Name="DeleteCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+            <ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+                <ComboBox.ItemTemplate>
+                   <DataTemplate>
+                     <StackPanel Orientation="Horizontal">
+				       <TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
+				       <TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+			         </StackPanel>
+                   </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Content="Удалить" HorizontalAlignment="2"/>
+        </StackPanel>
 		<StackPanel x:Name="CategorySettingsButtons" IsVisible="False" Grid.Column="1" Grid.Row="2">
 			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
 		</StackPanel>

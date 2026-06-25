@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using FinanceManager.Commands;
 using FinanceManager.Data;
+using FinanceManager.Enums;
 
 namespace FinanceManager.ViewModels
 {
@@ -37,8 +38,12 @@ namespace FinanceManager.ViewModels
         private int _transactionAmount;
         private int _balance;
         private string _icon;
+        private string _categoryName;
         private List<Category> _categoryList;
         private List<Transaction> _transactionList;
+        private bool _isIncomeChecked = true;
+        private bool _isExpenseChecked = false;
+        private Category _selectedCategory;
 
         public int UserId
         {
@@ -212,6 +217,44 @@ namespace FinanceManager.ViewModels
             {
                 _icon = value;
                 OnPropertyChanged();
+                AddCategoryCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public bool IsIncomeChecked
+        {
+            get { return _isIncomeChecked; }
+            set
+            {
+                _isIncomeChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsExpenseChecked
+        {
+            get { return _isExpenseChecked; }
+            set
+            {
+                _isExpenseChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public string CategoryName
+        {
+            get { return _categoryName; }
+            set
+            {
+                _categoryName = value;
+                OnPropertyChanged();
+                AddCategoryCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public Category SelectedCategory
+        {
+            get { return _selectedCategory; }
+            set
+            {
+                _selectedCategory = value;
+                OnPropertyChanged();
             }
         }
         public RelayCommand LoginCommand { get; }
@@ -221,11 +264,12 @@ namespace FinanceManager.ViewModels
         public RelayCommand AddExpenseCommand { get; }
         public RelayCommand SortByCategoryCommand { get; }
         public RelayCommand SortByDateCommand { get; }
+        public RelayCommand AddCategoryCommand { get; }
         public MainViewModel()
         {
-            categoryRepository.AddDefault();
-            LoadCategories();
-            LoadTransactions();
+            //categoryRepository.AddDefault();
+            //LoadCategories();
+            //LoadTransactions();
 
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
@@ -234,12 +278,28 @@ namespace FinanceManager.ViewModels
             AddExpenseCommand = new RelayCommand(OnAddExpense, () => CanAddTransaction);
             SortByCategoryCommand = new RelayCommand(OnSortByCategory, () => CanSort);
             SortByDateCommand = new RelayCommand(OnSortByDate, () => CanSort);
+            AddCategoryCommand = new RelayCommand(OnAddCategory, () => CanAddCategory);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
+        public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
         public bool CanSort => HomePageVisible == true;
+        public TransactionType GetTransactionType()
+        {
+            TransactionType transactionType;
+            if (IsIncomeChecked == true)
+            {
+                transactionType = TransactionType.Income;
+                return transactionType;
+            }
+            else
+            {
+                transactionType = TransactionType.Expense;
+                return transactionType;
+            }
+        }
         public void LoadCategories()
         {
             CategoryList = _db.Categories.ToList();
@@ -294,6 +354,10 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы ввели некорректное число!");
             }
+            if (SelectedCategory == null)
+            {
+                throw new Exception("Вы не выбрали категорию!");
+            }
             incomeRepository.AddIncome(TransactionAmount, TransactionDescription);
         }
         public void OnAddExpense()
@@ -307,6 +371,10 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы ввели некорректное число!");
             }
+            if (SelectedCategory == null)
+            {
+                throw new Exception("Вы не выбрали категорию!");
+            }
             expenseRepository.AddExpense(TransactionAmount, TransactionDescription);
         }
         public void OnSortByCategory()
@@ -319,6 +387,15 @@ namespace FinanceManager.ViewModels
         {
             TransactionList = transactionRepository.SortByDate();
             OnPropertyChanged(nameof(TransactionList));
+        }
+        public void OnAddCategory()
+        {
+            if (Icon.Length > 1)
+            {
+                throw new Exception("Иконка не может быть длинее 1 символа!");
+            }
+            TransactionType transactionType = GetTransactionType();
+            categoryRepository.AddCategory(CategoryName, Icon, transactionType);
         }
     }
 }
