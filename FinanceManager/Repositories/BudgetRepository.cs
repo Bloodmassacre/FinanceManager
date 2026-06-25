@@ -40,6 +40,12 @@ namespace FinanceManager.Repositories
             {
                 budget.Status = "Exceeded";
             }
+            if (budget.EndDate == DateTime.Now)
+            {
+                budget.Status = "Expired";
+            }
+            _db.Budgets.Update(budget);
+            _db.SaveChanges();
             return budget.Status;
         }
     }

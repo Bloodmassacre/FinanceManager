@@ -46,8 +46,8 @@ namespace FinanceManager.Repositories
         }
         public Category AddCategory(string name, string icon, TransactionType transactionType)
         {
-            var existingUser = _db.Categories.FirstOrDefault(s => s.Name == name);
-            if (existingUser != null)
+            var existingCategory = _db.Categories.FirstOrDefault(s => s.Name == name);
+            if (existingCategory != null)
             {
                 throw new Exception("Категория с таким именем уже существует!");
             }

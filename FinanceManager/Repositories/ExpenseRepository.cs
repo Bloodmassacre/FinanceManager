@@ -16,14 +16,15 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Expense AddExpense(int amount, string description)
+        public Expense AddExpense(int amount, string description, Category category)
         {
             var expense = new Expense()
             {
                 Amount = amount,
                 Description = description,
                 Date = DateTime.Now,
-                transactionType = TransactionType.Expense
+                transactionType = TransactionType.Expense,
+                Category = category
             };
             _db.Transactions.Add(expense);
             _db.SaveChanges();

@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using FinanceManager.Commands;
 using FinanceManager.Data;
 using FinanceManager.Enums;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FinanceManager.ViewModels
 {
@@ -45,6 +46,7 @@ namespace FinanceManager.ViewModels
         private bool _isIncomeChecked = true;
         private bool _isExpenseChecked = false;
         private Category _selectedCategory;
+        private string _budgetStatus;
 
         public int UserId
         {
@@ -267,6 +269,15 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public string BudgetStatus
+        {
+            get { return _budgetStatus; }
+            set
+            {
+                _budgetStatus = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -322,6 +333,11 @@ namespace FinanceManager.ViewModels
             TransactionList = _db.Transactions.ToList();
             OnPropertyChanged(nameof(TransactionList));
         }
+        public void LoadStatus()
+        {
+            BudgetStatus = budgetRepository.ChangeStatus();
+            OnPropertyChanged(nameof(BudgetStatus));
+        }
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
@@ -370,7 +386,8 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            incomeRepository.AddIncome(TransactionAmount, TransactionDescription);
+            incomeRepository.AddIncome(TransactionAmount, TransactionDescription, SelectedCategory);
+            LoadTransactions();
         }
         public void OnAddExpense()
         {
@@ -387,7 +404,8 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            expenseRepository.AddExpense(TransactionAmount, TransactionDescription);
+            expenseRepository.AddExpense(TransactionAmount, TransactionDescription, SelectedCategory);
+            LoadTransactions();
         }
         public void OnSortByCategory()
         {

@@ -43,7 +43,7 @@
 			<Button Content="Настроить бюджет" HorizontalAlignment="2" Click="BudgetSettingsButton"/>
         </StackPanel>
 		<StackPanel x:Name="HomePageButtons2" Grid.Column="2" Grid.Row="2" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Смотреть мес. отчёт" HorizontalAlignment="2"/>
+            <Button Content="Смотреть мес. отчёт" HorizontalAlignment="2"/>
 			<Button Content="Экспорт отчёта в CSV" HorizontalAlignment="2"/>
 		</StackPanel>
         <StackPanel x:Name="HomePageButtons3" Grid.Column="0" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
@@ -52,7 +52,15 @@
         <StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
 			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
             <Button Content="Фильтр по категории" HorizontalAlignment="2" Command="{Binding SortByCategoryCommand}"/>
-		</StackPanel>
+		    <StackPanel Orientation="Horizontal" HorizontalAlignment="2">
+				<TextBlock Text="Ваш бюджет: " HorizontalAlignment="2"/>
+				<TextBlock Text="{Binding BudgetCount}" HorizontalAlignment="2"/>
+			</StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="2">
+				<TextBlock Text="Состояние бюджета: " HorizontalAlignment="2"/>
+				<TextBlock Text="{Binding BudgetStatus}" HorizontalAlignment="2"/>
+			</StackPanel>
+        </StackPanel>
         <StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
 			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
             <TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
@@ -112,7 +120,6 @@
         <TextBlock Text="бюджета" HorizontalAlignment="2" FontSize="23"/>
         </StackPanel>
         <StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
-            <Button Content="Сохранить" HorizontalAlignment="2"/>
             <Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
         </StackPanel>
 		<StackPanel x:Name="CategorySettingsText" IsVisible="{Binding CategorySettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
@@ -137,6 +144,7 @@
                 <ComboBox.ItemTemplate>
                    <DataTemplate>
                      <StackPanel Orientation="Horizontal">
+                       <TextBlock Text="{Binding TransactionType}" HorizontalAlignment="2"/>
 				       <TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
 				       <TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
 			         </StackPanel>
