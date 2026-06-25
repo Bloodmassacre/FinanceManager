@@ -115,15 +115,15 @@
             <Button Content="Сохранить" HorizontalAlignment="2"/>
             <Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
         </StackPanel>
-		<StackPanel x:Name="CategorySettingsText" IsVisible="False" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
+		<StackPanel x:Name="CategorySettingsText" IsVisible="{Binding CategorySettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
 			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
 			<TextBlock Text="категорий" HorizontalAlignment="2" FontSize="23"/>
 		</StackPanel>
-		<StackPanel x:Name="CategorySettingsPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+		<StackPanel x:Name="CategorySettingsPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
 			<Button Content="Доб. категорию" HorizontalAlignment="2" Click="AddCategoryButton"/>
 			<Button Content="Удал. категорию" HorizontalAlignment="2" Click="DeleteCategoryButton"/>
 		</StackPanel>
-        <StackPanel x:Name="AddCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+        <StackPanel x:Name="AddCategoryPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
             <TextBox Watermark="Название" Text="{Binding CategoryName}"/>
             <TextBox Watermark="Иконка" Text="{Binding Icon}"/>
             <StackPanel Orientation="Horizontal">
@@ -132,7 +132,7 @@
             </StackPanel>
             <Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddCategoryCommand}"/>
         </StackPanel>
-        <StackPanel x:Name="DeleteCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+        <StackPanel x:Name="DeleteCategoryPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
             <ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
                 <ComboBox.ItemTemplate>
                    <DataTemplate>
@@ -143,9 +143,9 @@
                    </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Content="Удалить" HorizontalAlignment="2"/>
+            <Button Content="Удалить" HorizontalAlignment="2" Command="{Binding DeleteCategoryCommand}"/>
         </StackPanel>
-		<StackPanel x:Name="CategorySettingsButtons" IsVisible="False" Grid.Column="1" Grid.Row="2">
+		<StackPanel x:Name="CategorySettingsButtons" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="2">
 			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
 		</StackPanel>
     </Grid>

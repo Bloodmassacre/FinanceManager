@@ -63,5 +63,11 @@ namespace FinanceManager.Repositories
             _db.SaveChanges();
             return category;
         }
+        
+        public void DeleteCategory(Category category)
+        {
+            _db.Categories.Remove(category);
+            _db.SaveChanges();
+        }
     }
 }

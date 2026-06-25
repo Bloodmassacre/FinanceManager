@@ -31,6 +31,7 @@ namespace FinanceManager.ViewModels
         private bool _loginPageVisible = false;
         private bool _budgetPageVisible = false;
         private bool _budgetSettingsPageVisible = false;
+        private bool _categorySettingsPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;
         private string _transactionAmountString;
@@ -257,6 +258,15 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public bool CategorySettingsPageVisible
+        {
+            get { return _categorySettingsPageVisible; }
+            set
+            {
+                _categorySettingsPageVisible = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -265,6 +275,7 @@ namespace FinanceManager.ViewModels
         public RelayCommand SortByCategoryCommand { get; }
         public RelayCommand SortByDateCommand { get; }
         public RelayCommand AddCategoryCommand { get; }
+        public RelayCommand DeleteCategoryCommand {  get; }
         public MainViewModel()
         {
             //categoryRepository.AddDefault();
@@ -279,6 +290,7 @@ namespace FinanceManager.ViewModels
             SortByCategoryCommand = new RelayCommand(OnSortByCategory, () => CanSort);
             SortByDateCommand = new RelayCommand(OnSortByDate, () => CanSort);
             AddCategoryCommand = new RelayCommand(OnAddCategory, () => CanAddCategory);
+            DeleteCategoryCommand = new RelayCommand(OnDeleteCategory, () => true);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
@@ -396,6 +408,16 @@ namespace FinanceManager.ViewModels
             }
             TransactionType transactionType = GetTransactionType();
             categoryRepository.AddCategory(CategoryName, Icon, transactionType);
+            LoadCategories();
+        }
+        public void OnDeleteCategory()
+        {
+            if (SelectedCategory == null)
+            {
+                throw new Exception("Вы не выбрали категорию!");
+            }
+            categoryRepository.DeleteCategory(SelectedCategory);
+            LoadCategories();
         }
     }
 }
