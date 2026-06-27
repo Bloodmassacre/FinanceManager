@@ -22,7 +22,7 @@ namespace FinanceManager.Repositories
             {
                 LimitAmount = budgetCount,
                 SpentAmount = 0,
-                StartDate = DateTime.Now
+                StartDate = DateTime.UtcNow
             };
             _db.Budgets.Add(budget);
             _db.SaveChanges();

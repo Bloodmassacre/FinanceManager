@@ -17,16 +17,15 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Income AddIncome(int amount, string description, Category category)
+        public Income AddIncome(int amount, string description, int categoryId)
         {
             var income = new Income()
             {
                 Amount = amount,
                 Description = description,
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow,
                 transactionType = TransactionType.Income,
-                Category = category
-
+                CategoryId = categoryId
             };
             _db.Transactions.Add(income);
             _db.SaveChanges();

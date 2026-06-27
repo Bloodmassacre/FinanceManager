@@ -1,14 +1,15 @@
-﻿using FinanceManager.Models;
+﻿using FinanceManager.Commands;
+using FinanceManager.Data;
+using FinanceManager.Enums;
+using FinanceManager.Models;
 using FinanceManager.Repositories;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using FinanceManager.Commands;
-using FinanceManager.Data;
-using FinanceManager.Enums;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FinanceManager.ViewModels
 {
@@ -47,6 +48,8 @@ namespace FinanceManager.ViewModels
         private bool _isExpenseChecked = false;
         private Category _selectedCategory;
         private string _budgetStatus;
+        private string _budgetEndDateString;
+        private DateTime _budgetEndDate;
 
         public int UserId
         {
@@ -278,6 +281,24 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public string BudgetEndDateString
+        {
+            get { return _budgetEndDateString; }
+            set
+            {
+                _budgetEndDateString = value;
+                OnPropertyChanged();
+            }
+        }
+        public DateTime BudgetEndDate
+        {
+            get { return _budgetEndDate; }
+            set
+            {
+                _budgetEndDate = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -289,9 +310,9 @@ namespace FinanceManager.ViewModels
         public RelayCommand DeleteCategoryCommand {  get; }
         public MainViewModel()
         {
-            //categoryRepository.AddDefault();
-            //LoadCategories();
-            //LoadTransactions();
+            categoryRepository.AddDefault();
+            LoadCategories();
+            LoadTransactions();
 
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
@@ -305,7 +326,7 @@ namespace FinanceManager.ViewModels
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
-        public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString);
+        public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString) && !string.IsNullOrWhiteSpace(BudgetEndDateString);
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
         public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
         public bool CanSort => HomePageVisible == true;
@@ -322,6 +343,28 @@ namespace FinanceManager.ViewModels
                 transactionType = TransactionType.Expense;
                 return transactionType;
             }
+        }
+        public void UpdateBalance(int amount, TransactionType type)
+        {
+            var user = _db.Users.FirstOrDefault();
+            if (user == null)
+            {
+                return;
+            }
+            if (type == TransactionType.Income)
+            {
+                user.Balance += amount;
+            }
+            else
+            {
+                user.Balance -= amount;
+                if (user.Balance < 0)
+                {
+                    throw new Exception("Число не может выходить за пределы баланса!");
+                }
+            }
+            _db.Users.Update(user);
+            _db.SaveChanges();
         }
         public void LoadCategories()
         {
@@ -350,9 +393,9 @@ namespace FinanceManager.ViewModels
         {
             userRepository.Register(Login, Password, Email);
             RegisterPageVisible = false;
-            BudgetPageVisible = true;
+            HomePageVisible = true;
             OnPropertyChanged(nameof(RegisterPageVisible));
-            OnPropertyChanged(nameof(BudgetPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
         }
         public void OnCreateBudget()
         {
@@ -361,6 +404,11 @@ namespace FinanceManager.ViewModels
                 BudgetCount = Convert.ToInt32(BudgetCountString);
             }
             catch { throw new Exception("Вы ввели некорректное число!"); }
+            try
+            {
+                BudgetEndDate = Convert.ToDateTime(BudgetEndDateString);
+            }
+            catch { throw new Exception("Вы ввели некорректную дату! (ДД.ММ.ГГГГ)"); }
             if (BudgetCount <= 0)
             {
                 throw new Exception("Вы ввели некорректное число!");
@@ -375,7 +423,7 @@ namespace FinanceManager.ViewModels
         {
             try
             {
-                BudgetCount = Convert.ToInt32(TransactionAmountString);
+                TransactionAmount = Convert.ToInt32(TransactionAmountString);
             }
             catch { throw new Exception("Вы ввели некорректное число!"); }
             if (TransactionAmount <= 0)
@@ -386,7 +434,9 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            incomeRepository.AddIncome(TransactionAmount, TransactionDescription, SelectedCategory);
+            incomeRepository.AddIncome(TransactionAmount, TransactionDescription, SelectedCategory.Id);
+            UpdateBalance(TransactionAmount, TransactionType.Income);
+            var user = _db.Users.FirstOrDefault();
             LoadTransactions();
         }
         public void OnAddExpense()
@@ -404,7 +454,9 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            expenseRepository.AddExpense(TransactionAmount, TransactionDescription, SelectedCategory);
+            expenseRepository.AddExpense(TransactionAmount, TransactionDescription, SelectedCategory.Id);
+            UpdateBalance(TransactionAmount, TransactionType.Expense);
+            var user = _db.Users.FirstOrDefault();
             LoadTransactions();
         }
         public void OnSortByCategory()

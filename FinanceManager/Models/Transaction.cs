@@ -14,7 +14,7 @@ namespace FinanceManager.Models
         public string Description { get; set; }
         public DateTime Date { get; set; }
         public TransactionType transactionType { get; set; }
-        public Category Category { get; set; }
+        public int CategoryId { get; set; }
         public string GetFormattedAmount()
         {
             return Amount.ToString("C0");
