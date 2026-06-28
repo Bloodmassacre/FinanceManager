@@ -20,7 +20,7 @@ namespace FinanceManager.Repositories
         public List<Transaction> SortByCategory()
         {
             return _db.Transactions
-                .Include(t => t.CategoryId)
+                .Include(t => t.Category)
                 .OrderByDescending(t => t.Date)
                 .ToList();
         }

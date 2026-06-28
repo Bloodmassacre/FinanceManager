@@ -17,7 +17,7 @@ namespace FinanceManager.Data
 
         // Создание 
         // cd C:\Users\Jora\source\repos\Bloodmassacre\FinanceManager\FinanceManager
-        // dotnet ef migrations add InitialCreate
+        // dotnet ef migrations add Initialreate
 
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<User> Users { get; set; }

@@ -126,7 +126,8 @@ namespace FinanceManager.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("CategoryId");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
@@ -172,13 +173,11 @@ namespace FinanceManager.Migrations
 
             modelBuilder.Entity("FinanceManager.Models.Transaction", b =>
                 {
-                    b.HasOne("FinanceManager.Models.Category", "Category")
+                    b.HasOne("FinanceManager.Models.Category", null)
                         .WithMany("Transactions")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("FinanceManager.Models.Category", b =>

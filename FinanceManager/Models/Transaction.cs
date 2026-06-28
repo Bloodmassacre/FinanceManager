@@ -15,6 +15,7 @@ namespace FinanceManager.Models
         public DateTime Date { get; set; }
         public TransactionType transactionType { get; set; }
         public int CategoryId { get; set; }
+        public Category Category { get; set; }
         public string GetFormattedAmount()
         {
             return Amount.ToString("C0");
@@ -29,7 +30,6 @@ namespace FinanceManager.Models
         transactionType = TransactionType.Income;
         }
     }
-
     public class Expense : Transaction
     {
         public string Payee { get; set; } // Получатель

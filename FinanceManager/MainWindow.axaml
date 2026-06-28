@@ -30,18 +30,11 @@
 			<Button Content="Зарегистрироваться" HorizontalAlignment="2" Command="{Binding RegisterCommand}"/>
 			<Button Content="Отмена" HorizontalAlignment="2" Click="CancelRegisterButton"/>
 		</StackPanel>
-		<StackPanel x:Name="BudgetCreate" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetPageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBlock Text="Бюджет" HorizontalAlignment="2" FontSize="23"/>
-			<TextBox Watermark="Размер бюджета" Text="{Binding BudgetCountString}"/>
-			<TextBlock Text="Дата окончания" HorizontalAlignment="2"/>
-			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}" />
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding CreateBudgetCommand}"/>
-		</StackPanel>
 		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="{Binding HomePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
 			<TextBlock Text="Финансы" HorizontalAlignment="2" FontSize="23"/>
 			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Ваш баланс: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding Balance}" HorizontalAlignment="2"/>
+				<TextBlock Text="Баланс: " HorizontalAlignment="2"/>
+				<TextBlock Text="{Binding Balance, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
 			</StackPanel>
 		</StackPanel>
 		<StackPanel x:Name="HomePageButtons" Grid.Column="0" Grid.Row="2" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
@@ -57,16 +50,21 @@
 			<Button Content="Настроить категории" HorizontalAlignment="2" Click="CategorySettingsButton"/>
 		</StackPanel>
 		<StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
-			<Button Content="Фильтр по категории" HorizontalAlignment="2" Command="{Binding SortByCategoryCommand}"/>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
 				<TextBlock Text="Ваш бюджет: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding BudgetCount}" HorizontalAlignment="2"/>
+				<TextBlock Text="{Binding BudgetCount, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
+				<TextBlock Text="Потрачено: " HorizontalAlignment="2"/>
+				<TextBlock Text="{Binding BudgetPercent, StringFormat={}{0}%}" HorizontalAlignment="2"/>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
 				<TextBlock Text="Сост. бюджета: " HorizontalAlignment="2"/>
 				<TextBlock Text="{Binding BudgetStatus}" HorizontalAlignment="2"/>
 			</StackPanel>
+			<Border Height="1" Background="Gray" Opacity="0.3" Margin="0,9"/>
+			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
+			<Button Content="Фильтр по категории" HorizontalAlignment="2" Command="{Binding SortByCategoryCommand}"/>
 		</StackPanel>
 		<StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
 			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
@@ -76,8 +74,8 @@
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
 						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
@@ -89,8 +87,8 @@
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+						<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+						<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
 					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
@@ -101,8 +99,8 @@
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="{Binding CategoryId, Converter={StaticResource ConvertToIcon}}" HorizontalAlignment="2"/>
 						<TextBlock Text="{Binding transactionType, Converter={StaticResource ConvertTransactionType}}" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Amount, StringFormat={}{0}₽ }" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Description}" Margin="4,0,0,0" HorizontalAlignment="2"/>
+						<TextBlock Text="{Binding Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}₽ }" HorizontalAlignment="2"/>
+						<TextBlock Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0,0,0" HorizontalAlignment="2"/>
 					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
@@ -115,8 +113,8 @@
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Icon}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
 						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
@@ -128,8 +126,15 @@
 			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
 			<TextBlock Text="бюджета" HorizontalAlignment="2" FontSize="23"/>
 		</StackPanel>
-		<StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<Button Content="Доб. бюджет" HorizontalAlignment="2" Click="AddBudgetButton"/>
+		<StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
+			<Button Content="Доб. бюджет" HorizontalAlignment="2" Click="AddBudgetButton" IsEnabled="{Binding !HasBudget}"/>
+			<Button Content="Изм. бюджет" HorizontalAlignment="2" IsEnabled="{Binding HasBudget}"/>
+		</StackPanel>
+		<StackPanel x:Name="BudgetCreatePage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetCreatePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
+			<TextBox Watermark="Размер бюджета" Text="{Binding BudgetCountString}"/>
+			<TextBlock Text="Дата окончания" HorizontalAlignment="2"/>
+			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}" />
+			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding CreateBudgetCommand}"/>
 		</StackPanel>
 		<StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
 			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
@@ -156,9 +161,9 @@
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding TransactionType}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Icon}" Margin="4,0,0,0" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding TransactionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0,0,0" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
 						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>

@@ -33,7 +33,7 @@ namespace FinanceManager.Models
         }
         public int GetProgressPercent()
         {
-            int Percent = SpentAmount / LimitAmount * 100;
+            int Percent = (int)((double)SpentAmount / LimitAmount * 100);
             return Percent;
         }
 

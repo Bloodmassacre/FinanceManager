@@ -16,13 +16,15 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Budget AddBudget(int budgetCount)
+        public Budget AddBudget(int budgetCount, DateTime enddate)
         {
             var budget = new Budget()
             {
                 LimitAmount = budgetCount,
                 SpentAmount = 0,
-                StartDate = DateTime.UtcNow
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.SpecifyKind(enddate, DateTimeKind.Utc),
+                Status = "Active"
             };
             _db.Budgets.Add(budget);
             _db.SaveChanges();
