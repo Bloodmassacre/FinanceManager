@@ -71,6 +71,7 @@ namespace FinanceManager
             BudgetSettingsText.IsVisible = false;
             BudgetSettingsButtons.IsVisible = false;
             BudgetSettingsPage.IsVisible = false;
+            BudgetEditPage.IsVisible = false;
             BudgetCreatePage.IsVisible = false;
             CategorySettingsButtons.IsVisible = false;
             CategorySettingsText.IsVisible = false;
@@ -99,6 +100,11 @@ namespace FinanceManager
         {
             BudgetSettingsPage.IsVisible = false;
             BudgetCreatePage.IsVisible = true;
+        }
+        public void EditBudgetButton(object? sender, RoutedEventArgs e)
+        {
+            BudgetSettingsPage.IsVisible = false;
+            BudgetEditPage.IsVisible = true;
         }
     }
 }

@@ -14,15 +14,15 @@ namespace FinanceManager.Models
         public string Name { get; set; }
         public string Email { get; set; }
         private string _password;
-        public string Currency = "RUB"; // Валюта
-        public DateTime CreatedAt = DateTime.Now;
-        public int Balance = 0; 
+        public string Currency { get; set; } = "RUB"; // Валюта
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Balance { get; set; } = 0; 
         public string Password
         {
             get { return _password; }
             set { _password = value; }
         }
-        public List<Transaction> Transactions = new List<Transaction>();
+        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public int GetTotalIncome()
         {
             var Income = Transactions

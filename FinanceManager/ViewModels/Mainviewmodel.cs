@@ -14,7 +14,7 @@ using System.Runtime.InteropServices.Marshalling;
 
 namespace FinanceManager.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         private readonly UserRepository userRepository = new UserRepository();
         private readonly BudgetRepository budgetRepository = new BudgetRepository();
@@ -29,9 +29,9 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = true;
+        private bool _homePageVisible = false;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = false;
+        private bool _loginPageVisible = true;
         private bool _budgetCreatePageVisible = false;
         private bool _budgetSettingsPageVisible = false;
         private bool _categorySettingsPageVisible = false;
@@ -53,6 +53,10 @@ namespace FinanceManager.ViewModels
         private DateTime _budgetEndDate;
         private bool _hasBudget;
         private int _budgetPercent;
+        private List<Category> _incomeCategoryList;
+        private List<Category> _expenseCategoryList;
+        private string _newBudgetCountString;
+        private int _newBudgetCount;
 
         public int UserId
         {
@@ -321,6 +325,43 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public List<Category> IncomeCategoryList
+        {
+            get { return _incomeCategoryList; }
+            set
+            {
+                _incomeCategoryList = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<Category> ExpenseCategoryList
+        {
+            get { return _expenseCategoryList; }
+            set
+            {
+                _expenseCategoryList = value;
+                OnPropertyChanged();
+            }
+        }
+        public string NewBudgetCountString
+        {
+            get { return _newBudgetCountString; }
+            set
+            {
+                _newBudgetCountString = value;
+                OnPropertyChanged();
+                EditBudgetCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public int NewBudgetCount
+        {
+            get { return _newBudgetCount; }
+            set
+            {
+                _newBudgetCount = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -330,30 +371,27 @@ namespace FinanceManager.ViewModels
         public RelayCommand SortByDateCommand { get; }
         public RelayCommand AddCategoryCommand { get; }
         public RelayCommand DeleteCategoryCommand {  get; }
+        public RelayCommand EditBudgetCommand { get; }
         public MainViewModel()
         {
             categoryRepository.AddDefault();
-            UpdateHasBudget();
-            UpdateBudget();
-            LoadCategories();
-            LoadTransactions();
-
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
             AddIncomeCommand = new RelayCommand(OnAddIncome, () => CanAddTransaction);
             AddExpenseCommand = new RelayCommand(OnAddExpense, () => CanAddTransaction);
-            SortByCategoryCommand = new RelayCommand(OnSortByCategory, () => CanSort);
-            SortByDateCommand = new RelayCommand(OnSortByDate, () => CanSort);
+            SortByCategoryCommand = new RelayCommand(OnSortByCategory, () => true);
+            SortByDateCommand = new RelayCommand(OnSortByDate, () => true);
             AddCategoryCommand = new RelayCommand(OnAddCategory, () => CanAddCategory);
             DeleteCategoryCommand = new RelayCommand(OnDeleteCategory, () => true);
+            EditBudgetCommand = new RelayCommand(OnEditBudget, () => CanEditBudget);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString) && !string.IsNullOrWhiteSpace(BudgetEndDateString);
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
         public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
-        public bool CanSort => HomePageVisible == true;
+        public bool CanEditBudget => !string.IsNullOrWhiteSpace(NewBudgetCountString);
         public TransactionType GetTransactionType()
         {
             TransactionType transactionType;
@@ -367,6 +405,24 @@ namespace FinanceManager.ViewModels
                 transactionType = TransactionType.Expense;
                 return transactionType;
             }
+        }
+        public void OnEditBudget()
+        {
+            try
+            {
+                NewBudgetCount = Convert.ToInt32(NewBudgetCountString);
+            }
+            catch { throw new Exception("Вы ввели некорректное число!"); }
+            var budget = _db.Budgets.FirstOrDefault();
+            budget.LimitAmount = NewBudgetCount;
+            _db.Update(budget);
+            _db.SaveChanges();
+            NewBudgetCountString = "Успешно изменено!";
+            BudgetCount = NewBudgetCount;
+            BudgetPercent = _db.Budgets.FirstOrDefault().GetProgressPercent();
+            OnPropertyChanged(nameof(BudgetPercent));
+            OnPropertyChanged(nameof(BudgetCount));
+            OnPropertyChanged(nameof(NewBudgetCountString));
         }
         public void UpdateHasBudget()
         {
@@ -382,40 +438,65 @@ namespace FinanceManager.ViewModels
             if (budget != null)
             {
                 BudgetCount = budget.LimitAmount;
-                BudgetStatus = budget.Status;
-                BudgetPercent = budget.GetProgressPercent();
-                HasBudget = true;
-                OnPropertyChanged(nameof(BudgetCount));
-                OnPropertyChanged(nameof(BudgetStatus));
-                OnPropertyChanged(nameof(HasBudget));
+            }
+            else
+            {
+                HasBudget = false;
+                BudgetCount = 0;
+                BudgetPercent = 0;
+                BudgetStatus = "No budget";
+            }
+        }
+        public void LoadBudgetPercent()
+        {
+            if (_db.Budgets.FirstOrDefault() != null)
+            {
+                BudgetPercent = _db.Budgets.FirstOrDefault().GetProgressPercent();
+                OnPropertyChanged(nameof(BudgetPercent));
             }
         }
         public void UpdateBalance(int amount, TransactionType type)
         {
             var user = _db.Users.FirstOrDefault();
-            if (user == null)
-            {
-                return;
-            }
             if (type == TransactionType.Income)
             {
                 user.Balance += amount;
             }
             else
             {
-                user.Balance -= amount;
-                if (user.Balance < 0)
+                if (user.Balance - amount < 0)
                 {
-                    throw new Exception("Число не может выходить за пределы баланса!");
+                    throw new Exception("Не хватает средств на балансе!");
                 }
+                user.Balance -= amount;
+                UpdateBudgetSpent(amount);
             }
-            _db.Users.Update(user);
             _db.SaveChanges();
+            Balance = user.Balance;
+            OnPropertyChanged(nameof(Balance));
+        }
+        public void UpdateBudgetSpent(int amount)
+        {
+            var budget = _db.Budgets.FirstOrDefault();
+            if (budget != null)
+            {
+                budget.SpentAmount += amount;
+                _db.SaveChanges();
+                LoadBudgetPercent();
+            }
         }
         public void LoadCategories()
         {
             CategoryList = _db.Categories.ToList();
+            IncomeCategoryList = _db.Categories
+                .Where(c => c.TransactionType == TransactionType.Income)
+                .ToList();
+            ExpenseCategoryList = _db.Categories
+                .Where(c => c.TransactionType == TransactionType.Expense)
+                .ToList();
             OnPropertyChanged(nameof(CategoryList));
+            OnPropertyChanged(nameof(IncomeCategoryList));
+            OnPropertyChanged(nameof(ExpenseCategoryList));
         }
         public void LoadTransactions()
         {
@@ -427,6 +508,11 @@ namespace FinanceManager.ViewModels
             BudgetStatus = budgetRepository.ChangeStatus();
             OnPropertyChanged(nameof(BudgetStatus));
         }
+        public void LoadBalance()
+        {
+            Balance = _db.Users.FirstOrDefault().Balance;
+            OnPropertyChanged(nameof(Balance));
+        }
         public void OnLogin()
         {
             userRepository.Login(Login, Password);
@@ -434,6 +520,14 @@ namespace FinanceManager.ViewModels
             HomePageVisible = true;
             OnPropertyChanged(nameof(LoginPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
+            OnPropertyChanged(nameof(BudgetStatus));
+            UpdateHasBudget();
+            UpdateBudget();
+            LoadCategories();
+            LoadTransactions();
+            LoadBalance();
+            LoadStatus();
+            LoadBudgetPercent();
         }
         public void OnRegister()
         {
@@ -442,6 +536,12 @@ namespace FinanceManager.ViewModels
             HomePageVisible = true;
             OnPropertyChanged(nameof(RegisterPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
+            UpdateHasBudget();
+            UpdateBudget();
+            LoadCategories();
+            LoadTransactions();
+            LoadBalance();
+            LoadBudgetPercent();
         }
         public void OnCreateBudget()
         {
@@ -451,6 +551,10 @@ namespace FinanceManager.ViewModels
                 BudgetEndDate = Convert.ToDateTime(BudgetEndDateString);
             }
             catch { throw new Exception("Вы ввели некорректное или дату! (ДД.ММ.ГГГГ)!"); }
+            if (BudgetEndDate <= DateTime.UtcNow)
+            {
+                throw new Exception("Вы ввели некорректную дату!");
+            }
             if (BudgetCount <= 0)
             {
                 throw new Exception("Вы ввели некорректное число!");
@@ -460,12 +564,15 @@ namespace FinanceManager.ViewModels
                 throw new Exception("У вас уже есть бюджет!");
             }
             budgetRepository.AddBudget(BudgetCount, BudgetEndDate);
+            HasBudget = true;
             BudgetSettingsPageVisible = false;
             BudgetCreatePageVisible = false;
             HomePageVisible = true;
             OnPropertyChanged(nameof(BudgetCreatePageVisible));
             OnPropertyChanged(nameof(BudgetSettingsPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
+            OnPropertyChanged(nameof(HasBudget));
+            LoadBudgetPercent();
         }
         public void OnAddIncome()
         {
@@ -485,6 +592,10 @@ namespace FinanceManager.ViewModels
             incomeRepository.AddIncome(TransactionAmount, TransactionDescription, SelectedCategory.Id);
             UpdateBalance(TransactionAmount, TransactionType.Income);
             LoadTransactions();
+            LoadStatus();
+            LoadBudgetPercent();
+            OnPropertyChanged(nameof(Balance));
+            OnPropertyChanged(nameof(TransactionList));
         }
         public void OnAddExpense()
         {
@@ -504,6 +615,10 @@ namespace FinanceManager.ViewModels
             expenseRepository.AddExpense(TransactionAmount, TransactionDescription, SelectedCategory.Id);
             UpdateBalance(TransactionAmount, TransactionType.Expense);
             LoadTransactions();
+            LoadStatus();
+            LoadBudgetPercent();
+            OnPropertyChanged(nameof(Balance));
+            OnPropertyChanged(nameof(TransactionList));
         }
         public void OnSortByCategory()
         {
@@ -524,6 +639,10 @@ namespace FinanceManager.ViewModels
             }
             TransactionType transactionType = GetTransactionType();
             categoryRepository.AddCategory(CategoryName, Icon, transactionType);
+            CategorySettingsPageVisible = false;
+            HomePageVisible = true;
+            OnPropertyChanged(nameof(CategorySettingsPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
             LoadCategories();
         }
         public void OnDeleteCategory()
@@ -533,6 +652,10 @@ namespace FinanceManager.ViewModels
                 throw new Exception("Вы не выбрали категорию!");
             }
             categoryRepository.DeleteCategory(SelectedCategory);
+            CategorySettingsPageVisible = false;
+            HomePageVisible = true;
+            OnPropertyChanged(nameof(CategorySettingsPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
             LoadCategories();
         }
     }

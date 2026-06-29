@@ -70,7 +70,7 @@
 			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
 			<TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
 			<TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
-			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding IncomeCategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -109,7 +109,7 @@
 			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
 			<TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
 			<TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
-			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding ExpenseCategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
@@ -128,13 +128,18 @@
 		</StackPanel>
 		<StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
 			<Button Content="Доб. бюджет" HorizontalAlignment="2" Click="AddBudgetButton" IsEnabled="{Binding !HasBudget}"/>
-			<Button Content="Изм. бюджет" HorizontalAlignment="2" IsEnabled="{Binding HasBudget}"/>
+			<Button Content="Изм. бюджет" HorizontalAlignment="2" IsEnabled="{Binding HasBudget}" Click="EditBudgetButton"/>
 		</StackPanel>
 		<StackPanel x:Name="BudgetCreatePage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetCreatePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
 			<TextBox Watermark="Размер бюджета" Text="{Binding BudgetCountString}"/>
 			<TextBlock Text="Дата окончания" HorizontalAlignment="2"/>
-			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}" />
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding CreateBudgetCommand}"/>
+			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}"/>
+			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding CreateBudgetCommand}" IsEnabled="{Binding !HasBudget}"/>
+		</StackPanel>
+		<StackPanel x:Name="BudgetEditPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetCreatePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
+			<TextBlock Text="Новый размер бюджета" HorizontalAlignment="2"/>
+			<TextBox Watermark="Размер бюджета" HorizontalAlignment="2" Text="{Binding NewBudgetCountString}"/>
+			<Button Content="Изменить" Command="{Binding EditBudgetCommand}" HorizontalAlignment="2"/>
 		</StackPanel>
 		<StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
 			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>

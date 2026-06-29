@@ -33,20 +33,27 @@ namespace FinanceManager.Repositories
         public string ChangeStatus()
         {
             var budget = _db.Budgets.FirstOrDefault();
+            if (budget == null)
+            {
+                return "No budget";
+            }
             int percent = budget.GetProgressPercent();
-            if (percent > 80)
-            {
-                budget.Status = "Warning";
-            }
-            if (budget.IsOverBudget() == true)
-            {
-                budget.Status = "Exceeded";
-            }
-            if (budget.EndDate == DateTime.Now)
+            if (budget.EndDate <= DateTime.UtcNow)
             {
                 budget.Status = "Expired";
             }
-            _db.Budgets.Update(budget);
+            if (percent >= 100)
+            {
+                budget.Status = "Exceeded";
+            }
+            if (percent >= 80 && percent < 100)
+            {
+                budget.Status = "Warning";
+            }
+            else
+            {
+                budget.Status = "Active";
+            }
             _db.SaveChanges();
             return budget.Status;
         }
