@@ -36,13 +36,7 @@
 	</Application.Resources>
 
 	<Application.Styles>
-		<!-- Оставляем только стандартную тему -->
 		<FluentTheme />
-
-		<!-- 
-            ВСЁ, ЧТО НИЖЕ — ЗАКОММЕНТИРОВАНО.
-            Раскомментируйте, если хотите вернуть кастомные стили.
-        -->
 		<!--
         <Style Selector="Button">
             <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />

@@ -4,6 +4,7 @@ using FinanceManager.Enums;
 using FinanceManager.Models;
 using FinanceManager.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
+using System.Threading;
 
 namespace FinanceManager.ViewModels
 {
@@ -22,6 +24,7 @@ namespace FinanceManager.ViewModels
         private readonly IncomeRepository incomeRepository = new IncomeRepository();
         private readonly TransactionRepository transactionRepository = new TransactionRepository();
         private readonly CategoryRepository categoryRepository = new CategoryRepository();
+        private readonly RecurringTransactionRepository recurringTransactionRepository = new RecurringTransactionRepository();
         private readonly Database _db = new Database();
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -29,12 +32,13 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = false;
+        private bool _homePageVisible = true;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = true;
+        private bool _loginPageVisible = false;
         private bool _budgetCreatePageVisible = false;
         private bool _budgetSettingsPageVisible = false;
         private bool _categorySettingsPageVisible = false;
+        private bool _recurringTransactionSettingsPageVisible = false;
         private string _budgetCountString;
         private int _budgetCount;
         private string _transactionAmountString;
@@ -57,6 +61,19 @@ namespace FinanceManager.ViewModels
         private List<Category> _expenseCategoryList;
         private string _newBudgetCountString;
         private int _newBudgetCount;
+        private string _recurringTransactionAmountString;
+        private string _recurringTransactionDescription;
+        private string _recurringTransactionEndDateString;
+        private RecurringPeriod _recurringPeriod;
+        private int _recurringTransactionAmount;
+        private DateTime _recurringTransactionEndDate;
+        private bool _isDailyChecked = true;
+        private bool _isWeeklyChecked = false;
+        private bool _isMonthlyChecked = false;
+        private bool _isYearlyChecked = false;
+        private List<RecurringTransaction> _recurringTransactionList = new List<RecurringTransaction>();
+        private RecurringTransaction _selectedRecurringTransaction;
+        private Timer _recurringTransactionTimer;
 
         public int UserId
         {
@@ -362,6 +379,135 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public string RecurringTransactionAmountString
+        {
+            get { return _recurringTransactionAmountString; }
+            set
+            {
+                _recurringTransactionAmountString = value;
+                OnPropertyChanged();
+                AddRecurringTransactionCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public int RecurringTransactionAmount
+        {
+            get { return _recurringTransactionAmount; }
+            set
+            {
+                _recurringTransactionAmount = value;
+                OnPropertyChanged();
+            }
+        }
+        public string RecurringTransactionDescription
+        {
+            get { return _recurringTransactionDescription; }
+            set
+            {
+                _recurringTransactionDescription = value;
+                OnPropertyChanged();
+                AddRecurringTransactionCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public string RecurringTransactionEndDateString
+        {
+            get { return _recurringTransactionEndDateString; }
+            set
+            {
+                _recurringTransactionEndDateString = value;
+                OnPropertyChanged();
+                AddRecurringTransactionCommand.RaiseCanExecuteChanged();
+            }
+        }
+        public DateTime RecurringTransactionEndDate
+        {
+            get { return _recurringTransactionEndDate; }
+            set
+            {
+                _recurringTransactionEndDate = value;
+                OnPropertyChanged();
+            }
+        }
+        public RecurringPeriod RecurringPeriod
+        {
+            get { return _recurringPeriod; }
+            set
+            {
+                _recurringPeriod = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool RecurringTransactionSettingsPageVisible
+        {
+            get { return _recurringTransactionSettingsPageVisible; }
+            set
+            {
+                _recurringTransactionSettingsPageVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsDailyChecked
+        {
+            get { return _isDailyChecked; }
+            set
+            {
+                _isDailyChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsWeeklyChecked
+        {
+            get { return _isWeeklyChecked; }
+            set
+            {
+                _isWeeklyChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsMonthlyChecked
+        {
+            get { return _isMonthlyChecked; }
+            set
+            {
+                _isMonthlyChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool IsYearlyChecked
+        {
+            get { return _isYearlyChecked; }
+            set
+            {
+                _isYearlyChecked = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<RecurringTransaction> RecurringTransactionList
+        {
+            get { return _recurringTransactionList; }
+            set
+            {
+                _recurringTransactionList = value;
+                OnPropertyChanged();
+            }
+        }
+        public RecurringTransaction SelectedRecurringTransaction
+        {
+            get { return _selectedRecurringTransaction; }
+            set
+            {
+                _selectedRecurringTransaction = value;
+                OnPropertyChanged();
+            }
+        }
+        public Timer RecurringTransactionTimer
+        {
+            get { return _recurringTransactionTimer; }
+            set
+            {
+                _recurringTransactionTimer = value;
+                OnPropertyChanged();
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -372,9 +518,11 @@ namespace FinanceManager.ViewModels
         public RelayCommand AddCategoryCommand { get; }
         public RelayCommand DeleteCategoryCommand {  get; }
         public RelayCommand EditBudgetCommand { get; }
+        public RelayCommand AddRecurringTransactionCommand { get; }
+        public RelayCommand DeleteRecurringTransactionCommand { get; }
         public MainViewModel()
         {
-            categoryRepository.AddDefault();
+            //categoryRepository.AddDefault();
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
@@ -385,6 +533,8 @@ namespace FinanceManager.ViewModels
             AddCategoryCommand = new RelayCommand(OnAddCategory, () => CanAddCategory);
             DeleteCategoryCommand = new RelayCommand(OnDeleteCategory, () => true);
             EditBudgetCommand = new RelayCommand(OnEditBudget, () => CanEditBudget);
+            AddRecurringTransactionCommand = new RelayCommand(OnAddRecurringTransaction, () => CanAddRecurringTransaction);
+            DeleteRecurringTransactionCommand = new RelayCommand(OnDeleteRecurringTransaction, () => true);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
@@ -392,6 +542,7 @@ namespace FinanceManager.ViewModels
         public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
         public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
         public bool CanEditBudget => !string.IsNullOrWhiteSpace(NewBudgetCountString);
+        public bool CanAddRecurringTransaction => !string.IsNullOrWhiteSpace(RecurringTransactionAmountString) && !string.IsNullOrWhiteSpace(RecurringTransactionDescription) && !string.IsNullOrWhiteSpace(RecurringTransactionEndDateString);
         public TransactionType GetTransactionType()
         {
             TransactionType transactionType;
@@ -404,6 +555,34 @@ namespace FinanceManager.ViewModels
             {
                 transactionType = TransactionType.Expense;
                 return transactionType;
+            }
+        }
+        public RecurringPeriod GetRecurringPeriod()
+        {
+            RecurringPeriod recurringPeriod;
+            if (IsDailyChecked == true)
+            {
+                recurringPeriod = RecurringPeriod.Daily;
+                return recurringPeriod;
+            }
+            if (IsWeeklyChecked == true)
+            {
+                recurringPeriod = RecurringPeriod.Weekly;
+                return recurringPeriod;
+            }
+            if (IsMonthlyChecked == true)
+            {
+                recurringPeriod = RecurringPeriod.Monthly;
+                return recurringPeriod;
+            }
+            if (IsYearlyChecked == true)
+            {
+                recurringPeriod = RecurringPeriod.Yearly;
+                return recurringPeriod;
+            }
+            else
+            {
+                throw new Exception("Ошибка выбора периода!");
             }
         }
         public void OnEditBudget()
@@ -423,6 +602,18 @@ namespace FinanceManager.ViewModels
             OnPropertyChanged(nameof(BudgetPercent));
             OnPropertyChanged(nameof(BudgetCount));
             OnPropertyChanged(nameof(NewBudgetCountString));
+        }
+        public void StartSubscriptionCheck()
+        {
+            RecurringTransactionTimer = new Timer(_ =>
+            {
+                recurringTransactionRepository.RecurringPay();
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
+            Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                LoadTransactions();
+                LoadBudgetPercent();
+            });
         }
         public void UpdateHasBudget()
         {
@@ -503,6 +694,11 @@ namespace FinanceManager.ViewModels
             TransactionList = _db.Transactions.ToList();
             OnPropertyChanged(nameof(TransactionList));
         }
+        public void LoadRecurringTransactions()
+        {
+            RecurringTransactionList = _db.RecurringTransactions.ToList();
+            OnPropertyChanged(nameof(RecurringTransactionList));
+        }
         public void LoadStatus()
         {
             BudgetStatus = budgetRepository.ChangeStatus();
@@ -512,6 +708,16 @@ namespace FinanceManager.ViewModels
         {
             Balance = _db.Users.FirstOrDefault().Balance;
             OnPropertyChanged(nameof(Balance));
+        }
+        public void CheckRecurringTransactionPeriod()
+        {
+            var recurringTransactions = _db.RecurringTransactions
+               .Where(r => r.IsActive == true)
+               .ToList();
+            foreach (var recurringTransaction in recurringTransactions)
+            {
+                recurringTransactionRepository.ChangeStatusRecurringTransaction(recurringTransaction);
+            }
         }
         public void OnLogin()
         {
@@ -528,6 +734,8 @@ namespace FinanceManager.ViewModels
             LoadBalance();
             LoadStatus();
             LoadBudgetPercent();
+            LoadRecurringTransactions();
+            CheckRecurringTransactionPeriod();
         }
         public void OnRegister()
         {
@@ -550,7 +758,7 @@ namespace FinanceManager.ViewModels
                 BudgetCount = Convert.ToInt32(BudgetCountString);
                 BudgetEndDate = Convert.ToDateTime(BudgetEndDateString);
             }
-            catch { throw new Exception("Вы ввели некорректное или дату! (ДД.ММ.ГГГГ)!"); }
+            catch { throw new Exception("Вы ввели некорректное число или дату! (ДД.ММ.ГГГГ)!"); }
             if (BudgetEndDate <= DateTime.UtcNow)
             {
                 throw new Exception("Вы ввели некорректную дату!");
@@ -596,6 +804,32 @@ namespace FinanceManager.ViewModels
             LoadBudgetPercent();
             OnPropertyChanged(nameof(Balance));
             OnPropertyChanged(nameof(TransactionList));
+        }
+        public void OnAddRecurringTransaction()
+        {
+            try
+            {
+                RecurringTransactionAmount = Convert.ToInt32(RecurringTransactionAmountString);
+                RecurringTransactionEndDate = Convert.ToDateTime(RecurringTransactionEndDateString);
+            }
+            catch { throw new Exception("Вы ввели некорректное число или дату! (ДД.ММ.ГГГГ)"); }
+            RecurringPeriod = GetRecurringPeriod();
+            DateTime nextDate = _db.RecurringTransactions.FirstOrDefault().GetNextOccurrence();
+            recurringTransactionRepository.AddRecurringTransaction(RecurringTransactionAmount, RecurringTransactionDescription, RecurringPeriod, nextDate, RecurringTransactionEndDate);
+            LoadRecurringTransactions();
+        }
+        public void OnDeleteRecurringTransaction()
+        {
+            if (SelectedRecurringTransaction == null)
+            {
+                throw new Exception("Вы не выбрали подписку!");
+            }
+            recurringTransactionRepository.DeleteRecurringTransaction(SelectedRecurringTransaction);
+            RecurringTransactionSettingsPageVisible = false;
+            HomePageVisible = true;
+            OnPropertyChanged(nameof(RecurringTransactionSettingsPageVisible));
+            OnPropertyChanged(nameof(HomePageVisible));
+            LoadRecurringTransactions();
         }
         public void OnAddExpense()
         {

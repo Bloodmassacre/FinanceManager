@@ -85,6 +85,11 @@ namespace FinanceManager
             HomePageButtons4.IsVisible = true;
             HomePageTransactionList.IsVisible = true;
             HomePageCategoryList.IsVisible = true;
+            RecurringTransactionSettingsText.IsVisible = false;
+            RecurringTransactionSettingsButtons.IsVisible = false;
+            RecurringTransactionSettingsPage.IsVisible = false;
+            RecurringTransactionCreatePage.IsVisible = false;
+            RecurringTransactionDeletePage.IsVisible = false;
         }
         public void AddCategoryButton(object? sender, RoutedEventArgs e)
         {
@@ -105,6 +110,31 @@ namespace FinanceManager
         {
             BudgetSettingsPage.IsVisible = false;
             BudgetEditPage.IsVisible = true;
+        }
+        public void RecurringTransactionSettingsButton(object? sender, RoutedEventArgs e)
+        {
+            HomePage.IsVisible = false;
+            HomePageButtons.IsVisible = false;
+            HomePageButtons2.IsVisible = false;
+            HomePageButtons3.IsVisible = false;
+            HomePageButtons4.IsVisible = false;
+            HomePageTransactionList.IsVisible = false;
+            HomePageCategoryList.IsVisible = false;
+            AddIncomePage.IsVisible = false;
+            AddExpensePage.IsVisible = false;
+            RecurringTransactionSettingsText.IsVisible = true;
+            RecurringTransactionSettingsButtons.IsVisible = true;
+            RecurringTransactionSettingsPage.IsVisible = true;
+        }
+        public void AddRecurringTransactionButton(object? sender, RoutedEventArgs e)
+        {
+            RecurringTransactionSettingsPage.IsVisible = false;
+            RecurringTransactionCreatePage.IsVisible = true;
+        }
+        public void DeleteRecurringTransactionButton(object? sender, RoutedEventArgs e)
+        {
+            RecurringTransactionSettingsPage.IsVisible = false;
+            RecurringTransactionDeletePage.IsVisible = true;
         }
     }
 }
