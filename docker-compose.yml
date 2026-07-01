@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # 1. Сервис базы данных
+  db:
+    image: postgres:16
+    container_name: finance_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: FinanceDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # 2. Ваше приложение
+  app:
+    build: .
+    container_name: finance_app
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=FinanceDb;Username=postgres;Password=123456"
+    ports:
+      - "5000:5000"
+    restart: always
+
+volumes:
+  postgres_data:

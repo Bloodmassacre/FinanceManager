@@ -26,7 +26,10 @@ namespace FinanceManager.Data
         public DbSet<RecurringTransaction> RecurringTransactions { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=FinanceDb;Username=postgres;Password=123456");
+            var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost";
+            var connectionString = $"Host={host};Port=5432;Database=FinanceDb;Username=postgres;Password=123456";
+
+            optionsBuilder.UseNpgsql(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
