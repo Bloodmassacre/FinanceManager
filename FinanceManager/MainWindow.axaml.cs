@@ -49,6 +49,8 @@ namespace FinanceManager
             AddExpensePage.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
+            TransactionListPage.IsVisible = false;
+            CategoryListPage.IsVisible = false;
         }
         public void CategorySettingsButton(object? sender, RoutedEventArgs e)
         {
@@ -63,6 +65,8 @@ namespace FinanceManager
             HomePageCategoryList.IsVisible = false;
             AddIncomePage.IsVisible = false;
             AddExpensePage.IsVisible = false;
+            TransactionListPage.IsVisible = false;
+            CategoryListPage.IsVisible = false;
         }
         public void CloseSettingsButton(object? sender, RoutedEventArgs e)
         {
@@ -82,6 +86,8 @@ namespace FinanceManager
             HomePageButtons4.IsVisible = true;
             HomePageTransactionList.IsVisible = true;
             HomePageCategoryList.IsVisible = true;
+            TransactionListPage.IsVisible = true;
+            CategoryListPage.IsVisible = true;
             RecurringTransactionSettingsText.IsVisible = false;
             RecurringTransactionSettingsButtons.IsVisible = false;
             RecurringTransactionSettingsPage.IsVisible = false;
@@ -120,6 +126,8 @@ namespace FinanceManager
             HomePageButtons4.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
+            TransactionListPage.IsVisible = false;
+            CategoryListPage.IsVisible = false;
             AddIncomePage.IsVisible = false;
             AddExpensePage.IsVisible = false;
             RecurringTransactionSettingsText.IsVisible = true;
@@ -149,6 +157,8 @@ namespace FinanceManager
             HomePageButtons4.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
+            TransactionListPage.IsVisible = false;
+            CategoryListPage.IsVisible = false;
             AddIncomePage.IsVisible = false;
             AddExpensePage.IsVisible = false;
             ReportPageText.IsVisible = true;

@@ -66,7 +66,7 @@
 			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="CornerRadius" Value="6"/>
 			<Setter Property="Padding" Value="5"/>
-			<Setter Property="MaxHeight" Value="200"/>
+			<Setter Property="MinHeight" Value="200"/>
 		</Style>
 		<Style Selector="ListBoxItem">
 			<Setter Property="Background" Value="Transparent"/>
@@ -116,10 +116,10 @@
 		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="{Binding HomePageVisible}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5">
 			<TextBlock Text="💳 Финансы" HorizontalAlignment="Center" FontSize="28" FontWeight="Bold" Foreground="#E0E0E0"/>
 			<TextBlock HorizontalAlignment="Center" FontSize="16" Foreground="#A0A0A0" Margin="0,2">
-				<Run Text="Привет, "/>
-				<Run Text="{Binding Login}"/>
-				<Run Text="!"/>
-			</TextBlock>
+               <Run Text="Привет, "/>
+               <Run Text="{Binding Login}"/>
+               <Run Text="!"/>
+            </TextBlock>
 			<Border Padding="15,8" Margin="0,5">
 				<StackPanel Orientation="Horizontal" Spacing="20">
 					<TextBlock Text="Баланс:" Foreground="#A0A0A0"/>
@@ -204,38 +204,49 @@
 		</StackPanel>
 
 		<!-- ===== СПИСОК КАТЕГОРИЙ ===== -->
-		<StackPanel Grid.Column="0" Grid.Row="1" IsVisible="{Binding HomePageVisible}" Margin="0,5" VerticalAlignment="Top">
-			<TextBlock Text="📂 Категории" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
-			<ListBox x:Name="HomePageCategoryList" ItemsSource="{Binding CategoryList}" Background="#252525" BorderThickness="0" Height="150">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal" Spacing="5">
-							<TextBlock Text="{Binding Icon}" FontSize="16"/>
-							<TextBlock Text="{Binding Name}" Foreground="#E0E0E0"/>
-						</StackPanel>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</StackPanel>
-
-		<!-- ===== СПИСОК ТРАНЗАКЦИЙ ===== -->
-		<StackPanel Grid.Column="2" Grid.Row="1" IsVisible="{Binding HomePageVisible}" Margin="0,5">
-			<TextBlock Text="📋 Транзакции" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
-			<ListBox x:Name="HomePageTransactionList" ItemsSource="{Binding TransactionList}" Background="#252525" BorderThickness="0" MaxHeight="180">
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<Border Background="#2D2D2D" CornerRadius="4" Padding="8,4" Margin="0,2">
-							<StackPanel Orientation="Horizontal" Spacing="10">
-								<TextBlock Text="{Binding CategoryId, Converter={StaticResource ConvertToIcon}}" FontSize="16"/>
-								<TextBlock Text="{Binding transactionType, Converter={StaticResource ConvertTransactionType}}" Foreground="#A0A0A0"/>
-								<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}" Foreground="#E0E0E0"/>
-								<TextBlock Text="{Binding Description}" Foreground="#888888"/>
+		<Border x:Name="CategoryListPage" IsVisible="{Binding HomePageVisible}" Grid.Row="0" Background="#252525" CornerRadius="6" Padding="5" Margin="0,5,0,2" VerticalAlignment="Top">
+			<StackPanel>
+				<TextBlock Text="📂 Категории" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
+				<ListBox x:Name="HomePageCategoryList"
+						 ItemsSource="{Binding CategoryList}"
+						 Background="Transparent"
+						 BorderThickness="0"
+						 MaxHeight="200">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal" Spacing="5">
+								<TextBlock Text="{Binding Icon}" FontSize="16"/>
+								<TextBlock Text="{Binding Name}" Foreground="#E0E0E0"/>
 							</StackPanel>
-						</Border>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</StackPanel>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</Border>
+		<!-- ===== СПИСОК ТРАНЗАКЦИЙ ===== -->
+		<Border x:Name="TransactionListPage" Grid.Column="2" Grid.Row="1" IsVisible="{Binding HomePageVisible}" Background="#252525" CornerRadius="6" Padding="5" Margin="0,5" Height="240" VerticalAlignment="Top">
+			<StackPanel>
+				<TextBlock Text="📋 Транзакции" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
+				<ListBox x:Name="HomePageTransactionList"
+						 ItemsSource="{Binding TransactionList}"
+						 Background="Transparent"
+						 BorderThickness="0"
+						 MaxHeight="160">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<Border Background="#2D2D2D" CornerRadius="4" Padding="8,4" Margin="0,2">
+								<StackPanel Orientation="Horizontal" Spacing="10">
+									<TextBlock Text="{Binding CategoryId, Converter={StaticResource ConvertToIcon}}" FontSize="16"/>
+									<TextBlock Text="{Binding transactionType, Converter={StaticResource ConvertTransactionType}}" Foreground="#A0A0A0"/>
+									<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}" Foreground="#E0E0E0"/>
+									<TextBlock Text="{Binding Description}" Foreground="#888888"/>
+								</StackPanel>
+							</Border>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</StackPanel>
+		</Border>
 
 		<!-- ===== НАСТРОЙКИ БЮДЖЕТА ===== -->
 		<StackPanel x:Name="BudgetSettingsText" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5">
@@ -284,8 +295,8 @@
 			<TextBlock Text="📊 Отчёт" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
 		</StackPanel>
 
-		<StackPanel x:Name="ReportPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding ReportPageVisible}" Margin="0,5">
-			<ListBox ItemsSource="{Binding MonthlyTransactions}" Background="#252525" BorderThickness="0" MaxHeight="200">
+		<StackPanel x:Name="ReportPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding ReportPageVisible}" Margin="0,5" MinHeight="200">
+			<ListBox ItemsSource="{Binding MonthlyTransactions}" Background="#252525" BorderThickness="0" MinHeight="200">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Border Background="#2D2D2D" CornerRadius="4" Padding="8,4" Margin="0,2">
