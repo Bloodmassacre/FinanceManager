@@ -202,17 +202,19 @@
 			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddRecurringTransactionCommand}"/>
 		</StackPanel>
 			<StackPanel x:Name="RecurringTransactionDeletePage" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedRecurringTransaction}" ItemsSource="{Binding RecurringTransactionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding RecurringPeriod, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0} }" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}₽ }" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-						</StackPanel>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
+				<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedRecurringTransaction}" ItemsSource="{Binding RecurringTransactionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<StackPanel Orientation="Horizontal">
+								<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
+								<TextBlock Text="/" HorizontalAlignment="2"/>
+								<TextBlock Text="{Binding RecurringPeriod, StringFormat={}{0}}" HorizontalAlignment="2"/>
+								<TextBlock Text=" " HorizontalAlignment="2"/>
+								<TextBlock Text="{Binding Description}" HorizontalAlignment="2"/>
+							</StackPanel>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
 			<Button Content="Удалить" HorizontalAlignment="2" Command="{Binding DeleteRecurringTransactionCommand}"/>
 		</StackPanel>
 		<StackPanel x:Name="RecurringTransactionSettingsButtons" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="2" VerticalAlignment="2">

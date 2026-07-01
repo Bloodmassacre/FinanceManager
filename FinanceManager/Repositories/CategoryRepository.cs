@@ -39,7 +39,8 @@ namespace FinanceManager.Repositories
                new Category { Name = "Здоровье", Icon = "💊", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" },
                new Category { Name = "Одежда", Icon = "👔", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" },
                new Category { Name = "Образование", Icon = "📚", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" },
-               new Category { Name = "Прочее", Icon = "📦", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" }
+               new Category { Name = "Прочее", Icon = "📦", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" },
+               new Category { Name = "Подписки", Icon = "🔁", TransactionType = TransactionType.Expense, IsDefault = true, Color = "Green" }
             };
             _db.Categories.AddRange(categories);
             _db.SaveChanges();

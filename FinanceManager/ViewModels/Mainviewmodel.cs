@@ -32,9 +32,9 @@ namespace FinanceManager.ViewModels
         private string _login;
         private string _password;
         private string _email;
-        private bool _homePageVisible = true;
+        private bool _homePageVisible = false;
         private bool _registerPageVisible = false;
-        private bool _loginPageVisible = false;
+        private bool _loginPageVisible = true;
         private bool _budgetCreatePageVisible = false;
         private bool _budgetSettingsPageVisible = false;
         private bool _categorySettingsPageVisible = false;
@@ -522,7 +522,7 @@ namespace FinanceManager.ViewModels
         public RelayCommand DeleteRecurringTransactionCommand { get; }
         public MainViewModel()
         {
-            //categoryRepository.AddDefault();
+            categoryRepository.AddDefault();
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
             CreateBudgetCommand = new RelayCommand(OnCreateBudget, () => CanCreateBudget);
@@ -608,12 +608,14 @@ namespace FinanceManager.ViewModels
             RecurringTransactionTimer = new Timer(_ =>
             {
                 recurringTransactionRepository.RecurringPay();
-            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
-            Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                LoadTransactions();
-                LoadBudgetPercent();
-            });
+                Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    LoadTransactions();
+                    LoadBudgetPercent();
+                    LoadStatus();
+                    LoadBalance();
+                });
+            }, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
         }
         public void UpdateHasBudget()
         {
@@ -727,6 +729,8 @@ namespace FinanceManager.ViewModels
             OnPropertyChanged(nameof(LoginPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
             OnPropertyChanged(nameof(BudgetStatus));
+            recurringTransactionRepository.RecurringPay();
+            StartSubscriptionCheck();
             UpdateHasBudget();
             UpdateBudget();
             LoadCategories();
@@ -750,6 +754,7 @@ namespace FinanceManager.ViewModels
             LoadTransactions();
             LoadBalance();
             LoadBudgetPercent();
+            StartSubscriptionCheck();
         }
         public void OnCreateBudget()
         {
@@ -814,8 +819,7 @@ namespace FinanceManager.ViewModels
             }
             catch { throw new Exception("Вы ввели некорректное число или дату! (ДД.ММ.ГГГГ)"); }
             RecurringPeriod = GetRecurringPeriod();
-            DateTime nextDate = _db.RecurringTransactions.FirstOrDefault().GetNextOccurrence();
-            recurringTransactionRepository.AddRecurringTransaction(RecurringTransactionAmount, RecurringTransactionDescription, RecurringPeriod, nextDate, RecurringTransactionEndDate);
+            recurringTransactionRepository.AddRecurringTransaction(RecurringTransactionAmount, RecurringTransactionDescription, RecurringPeriod, RecurringTransactionEndDate);
             LoadRecurringTransactions();
         }
         public void OnDeleteRecurringTransaction()
@@ -824,7 +828,11 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали подписку!");
             }
-            recurringTransactionRepository.DeleteRecurringTransaction(SelectedRecurringTransaction);
+            var recurring = _db.RecurringTransactions.Find(SelectedRecurringTransaction.Id);
+            if (recurring != null)
+            {
+                recurringTransactionRepository.DeleteRecurringTransaction(recurring);
+            }
             RecurringTransactionSettingsPageVisible = false;
             HomePageVisible = true;
             OnPropertyChanged(nameof(RecurringTransactionSettingsPageVisible));

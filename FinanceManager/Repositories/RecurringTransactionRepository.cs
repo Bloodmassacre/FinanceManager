@@ -18,18 +18,18 @@ namespace FinanceManager.Repositories
 
         }
 
-        public RecurringTransaction AddRecurringTransaction(int amount, string description, RecurringPeriod recurringPeriod, DateTime nextDate, DateTime endDate)
+        public RecurringTransaction AddRecurringTransaction(int amount, string description, RecurringPeriod recurringPeriod, DateTime endDate)
         {
             var recurringTransaction = new RecurringTransaction()
             {
                 Amount = amount,
                 Description = description,
                 RecurringPeriod = recurringPeriod,
-                NextDate = nextDate,
-                EndDate = endDate,
+                EndDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
                 IsActive = true
                 
             };
+            recurringTransaction.NextDate = recurringTransaction.GetNextOccurrence();
             _db.RecurringTransactions.Add(recurringTransaction);
             _db.SaveChanges();
             return recurringTransaction;
@@ -68,9 +68,21 @@ namespace FinanceManager.Repositories
                 _db.SaveChanges();
                 return;
             }
+            var category = _db.Categories.FirstOrDefault(x => x.Name == "Подписки");
+            var transaction = new Transaction
+            {
+                Amount = recurringTransaction.Amount,
+                Description = $"Подписка {recurringTransaction.Description}",
+                Date = dateTime,
+                transactionType = TransactionType.Expense,
+                Category = category,
+                CategoryId = category.Id
+            };
+            _db.Transactions.Add(transaction);
             var user = _db.Users.FirstOrDefault();
-            user.Balance =- recurringTransaction.Amount;
+            user.Balance -= recurringTransaction.Amount;
             recurringTransaction.NextDate = recurringTransaction.GetNextOccurrence();
+            _db.SaveChanges();
         }
     }
 }
