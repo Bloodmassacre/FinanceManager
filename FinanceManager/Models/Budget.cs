@@ -10,8 +10,9 @@ namespace FinanceManager.Models
     public class Budget
     {
         public int Id { get; set; }
+        public int UserId { get; set; }
         public int LimitAmount { get; set; }
-        public int SpentAmount {  get; set; }
+        public int SpentAmount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string Status { get; set; }
@@ -34,6 +35,7 @@ namespace FinanceManager.Models
         }
         public int GetProgressPercent()
         {
+            if (LimitAmount == 0) return 0;
             int Percent = (int)Math.Round((double)SpentAmount / LimitAmount * 100);
             return Percent;
         }

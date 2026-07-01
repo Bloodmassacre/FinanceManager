@@ -17,10 +17,11 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Income AddIncome(int amount, string description, int categoryId)
+        public Income AddIncome(int userId, int amount, string description, int categoryId)
         {
             var income = new Income()
             {
+                UserId = userId,
                 Amount = amount,
                 Description = description,
                 Date = DateTime.UtcNow,

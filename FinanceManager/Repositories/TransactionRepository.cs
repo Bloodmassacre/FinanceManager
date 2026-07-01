@@ -17,16 +17,18 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public List<Transaction> SortByCategory()
+        public List<Transaction> SortByCategory(int userId)
         {
             return _db.Transactions
+                .Where(x => x.UserId == userId)
                 .Include(t => t.Category)
                 .OrderByDescending(t => t.Category.Name)
                 .ToList();
         }
-        public List<Transaction> SortByDate()
+        public List<Transaction> SortByDate(int userId)
         {
             return _db.Transactions
+                .Where(x => x.UserId == userId)
                 .OrderByDescending(x => x.Date)
                 .ToList();
         }

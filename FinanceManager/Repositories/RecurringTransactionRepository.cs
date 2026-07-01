@@ -18,16 +18,17 @@ namespace FinanceManager.Repositories
 
         }
 
-        public RecurringTransaction AddRecurringTransaction(int amount, string description, RecurringPeriod recurringPeriod, DateTime endDate)
+        public RecurringTransaction AddRecurringTransaction(int userId, int amount, string description, RecurringPeriod recurringPeriod, DateTime endDate)
         {
             var recurringTransaction = new RecurringTransaction()
             {
+                UserId = userId,
                 Amount = amount,
                 Description = description,
                 RecurringPeriod = recurringPeriod,
                 EndDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc),
                 IsActive = true
-                
+
             };
             recurringTransaction.NextDate = recurringTransaction.GetNextOccurrence();
             _db.RecurringTransactions.Add(recurringTransaction);
@@ -49,10 +50,10 @@ namespace FinanceManager.Repositories
             }
             return recurringTransaction;
         }
-        public void RecurringPay()
+        public void RecurringPay(int userId)
         {
             var recurringTransactions = _db.RecurringTransactions
-                .Where(x => x.IsActive == true && x.NextDate <= DateTime.UtcNow)
+                .Where(x => x.UserId == userId && x.IsActive == true && x.NextDate <= DateTime.UtcNow)
                 .ToList();
             foreach (var recurring in recurringTransactions)
             {
@@ -69,18 +70,34 @@ namespace FinanceManager.Repositories
                 return;
             }
             var category = _db.Categories.FirstOrDefault(x => x.Name == "Подписки");
+            if (category == null)
+            {
+                category = new Category
+                {
+                    Name = "Подписки",
+                    Icon = "🔁",
+                    TransactionType = TransactionType.Expense,
+                    IsDefault = true,
+                    Color = "Green"
+                };
+                _db.Categories.Add(category);
+                _db.SaveChanges();
+            }
             var transaction = new Transaction
             {
+                UserId = recurringTransaction.UserId,
                 Amount = recurringTransaction.Amount,
                 Description = $"Подписка {recurringTransaction.Description}",
                 Date = dateTime,
                 transactionType = TransactionType.Expense,
-                Category = category,
                 CategoryId = category.Id
             };
             _db.Transactions.Add(transaction);
-            var user = _db.Users.FirstOrDefault();
-            user.Balance -= recurringTransaction.Amount;
+            var user = _db.Users.Find(recurringTransaction.UserId);
+            if (user != null)
+            {
+                user.Balance -= recurringTransaction.Amount;
+            }
             recurringTransaction.NextDate = recurringTransaction.GetNextOccurrence();
             _db.SaveChanges();
         }

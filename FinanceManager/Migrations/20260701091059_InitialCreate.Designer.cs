@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceManager.Migrations
 {
     [DbContext(typeof(Database))]
-    [Migration("20260629154247_InitialCreate")]
+    [Migration("20260701091059_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -48,6 +48,9 @@ namespace FinanceManager.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -112,6 +115,9 @@ namespace FinanceManager.Migrations
                     b.Property<int>("RecurringPeriod")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("RecurringTransactions");
@@ -139,7 +145,7 @@ namespace FinanceManager.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<int>("transactionType")
@@ -199,7 +205,9 @@ namespace FinanceManager.Migrations
 
                     b.HasOne("FinanceManager.Models.User", null)
                         .WithMany("Transactions")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
                 });

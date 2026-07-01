@@ -22,12 +22,12 @@
 			<Button Content="Войти" HorizontalAlignment="2" Command="{Binding LoginCommand}"/>
 			<Button Content="Создать" HorizontalAlignment="2" Click="RegisterButton"/>
 		</StackPanel>
-		<StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="{Binding RegisterPageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
+		<StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
 			<TextBlock Text="Создать" HorizontalAlignment="2" FontSize="24"/>
 			<TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<TextBox Watermark="Почта" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<Button Content="Зарегистрироваться" HorizontalAlignment="2" Command="{Binding RegisterCommand}"/>
+			<Button Content="Зарегистрироваться" HorizontalAlignment="2" Command="{Binding RegisterCommand}" Click="HideRegisterPanel"/>
 			<Button Content="Отмена" HorizontalAlignment="2" Click="CancelRegisterButton"/>
 		</StackPanel>
 		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="{Binding HomePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
@@ -44,8 +44,7 @@
 			<Button Content="Настроить бюджет" HorizontalAlignment="2" Click="BudgetSettingsButton"/>
 		</StackPanel>
 		<StackPanel x:Name="HomePageButtons2" Grid.Column="2" Grid.Row="2" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Смотреть мес. отчёт" HorizontalAlignment="2"/>
-			<Button Content="Экспорт отчёта в CSV" HorizontalAlignment="2"/>
+			<Button Content="Смотреть мес. отчёт" HorizontalAlignment="2" Click="ShowReportButton"/>
 		</StackPanel>
 		<StackPanel x:Name="HomePageButtons3" Grid.Column="0" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
 			<Button Content="Настроить категории" HorizontalAlignment="2" Click="CategorySettingsButton"/>
@@ -219,6 +218,43 @@
 		</StackPanel>
 		<StackPanel x:Name="RecurringTransactionSettingsButtons" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="2" VerticalAlignment="2">
 			<Button Content="Закрыть" HorizontalAlignment="2" VerticalAlignment="2" Click="CloseSettingsButton"/>
+		</StackPanel>
+		<StackPanel x:Name="ReportPageText" IsVisible="{Binding ReportPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
+			<TextBlock Text="Просмотр" HorizontalAlignment="2" FontSize="23"/>
+			<TextBlock Text="Отчёта" HorizontalAlignment="2" FontSize="23"/>
+		</StackPanel>
+		<StackPanel x:Name="ReportPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding ReportPageVisible}">
+			<ListBox ItemsSource="{Binding MonthlyTransactions}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid ColumnDefinitions="Auto, *, Auto">
+							<TextBlock Grid.Column="0" Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}}"/>
+							<TextBlock Grid.Column="1" Text="{Binding Description}" Margin="10,0"/>
+							<TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat={}{0}₽}"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
+		<StackPanel x:Name="ReportStatsPage" Grid.Column="0" Grid.Row="1" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding ReportPageVisible}">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Доходы:" FontWeight="Bold"/>
+				<TextBlock Text="{Binding MonthlyIncome}"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Расходы:" FontWeight="Bold"/>
+				<TextBlock Text="{Binding MonthlyExpense}"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Баланс:" FontWeight="Bold"/>
+				<TextBlock Text="{Binding MonthlyBalance}"/>
+			</StackPanel>
+		</StackPanel>
+		<StackPanel x:Name="ReportPageButtons" Grid.Column="1" Grid.Row="2" IsVisible="{Binding ReportPageVisible}" VerticalAlignment="2">
+			<ComboBox ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding SelectedMonth}" HorizontalAlignment="2"/>
+			<Button Content="Обновить" Command="{Binding CreateReportCommand}" HorizontalAlignment="2"/>
+			<Button Content="Экспорт CSV" Command="{Binding ExportReportCommand}" HorizontalAlignment="2"/>
+			<Button Content="Закрыть" Click="CloseSettingsButton" HorizontalAlignment="2"/>
 		</StackPanel>
 	</Grid>
 </Window>

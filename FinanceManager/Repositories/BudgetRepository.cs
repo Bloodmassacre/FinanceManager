@@ -16,10 +16,11 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Budget AddBudget(int budgetCount, DateTime enddate)
+        public Budget AddBudget(int userId, int budgetCount, DateTime enddate)
         {
             var budget = new Budget()
             {
+                UserId = userId,
                 LimitAmount = budgetCount,
                 SpentAmount = 0,
                 StartDate = DateTime.UtcNow,
@@ -30,9 +31,9 @@ namespace FinanceManager.Repositories
             _db.SaveChanges();
             return budget;
         }
-        public string ChangeStatus()
+        public string ChangeStatus(int userId)
         {
-            var budget = _db.Budgets.FirstOrDefault();
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == userId);
             if (budget == null)
             {
                 return "No budget";

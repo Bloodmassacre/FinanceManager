@@ -1,17 +1,24 @@
-﻿using FinanceManager.Commands;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using FinanceManager.Commands;
 using FinanceManager.Data;
 using FinanceManager.Enums;
 using FinanceManager.Models;
 using FinanceManager.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Identity.Client;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using System.Threading;
 
 namespace FinanceManager.ViewModels
@@ -75,6 +82,13 @@ namespace FinanceManager.ViewModels
         private RecurringTransaction _selectedRecurringTransaction;
         private Timer _recurringTransactionTimer;
 
+        private bool _reportPageVisible;
+        private List<Transaction> _monthlyTransactions;
+        private int _monthlyIncome;
+        private int _monthlyExpense;
+        private int _monthlyBalance;
+        private string _selectedMonth;
+        private List<string> _monthOptions = new List<string>();
         public int UserId
         {
             get { return _userId; }
@@ -215,7 +229,7 @@ namespace FinanceManager.ViewModels
         }
         public bool BudgetSettingsPageVisible
         {
-            get { return _budgetSettingsPageVisible; } 
+            get { return _budgetSettingsPageVisible; }
             set
             {
                 _budgetSettingsPageVisible = value;
@@ -508,6 +522,70 @@ namespace FinanceManager.ViewModels
                 OnPropertyChanged();
             }
         }
+        public bool ReportPageVisible
+        {
+            get { return _reportPageVisible; }
+            set
+            {
+                _reportPageVisible = value;
+                OnPropertyChanged();
+            }
+        }
+        public List<Transaction> MonthlyTransactions
+        {
+            get { return _monthlyTransactions; }
+            set
+            {
+                _monthlyTransactions = value;
+                OnPropertyChanged();
+            }
+        }
+        public int MonthlyIncome
+        {
+            get { return _monthlyIncome; }
+            set 
+            { 
+                _monthlyIncome = value;
+                OnPropertyChanged(); 
+            }
+        }
+        public int MonthlyExpense
+        {
+            get { return _monthlyExpense; }
+            set
+            {
+                _monthlyExpense = value;
+                OnPropertyChanged();
+            }
+        }
+        public int MonthlyBalance
+        {
+            get { return _monthlyBalance; }
+            set
+            {
+                _monthlyBalance = value;
+                OnPropertyChanged();
+            }
+        }
+        public string SelectedMonth
+        {
+            get { return _selectedMonth; }
+            set
+            {
+                _selectedMonth = value;
+                OnPropertyChanged();
+                CreateReport();
+            }
+        }
+        public List<string> MonthOptions
+        {
+            get { return _monthOptions; }
+            set 
+            { 
+                _monthOptions = value; 
+                OnPropertyChanged(); 
+            }
+        }
         public RelayCommand LoginCommand { get; }
         public RelayCommand RegisterCommand { get; }
         public RelayCommand CreateBudgetCommand { get; }
@@ -516,12 +594,21 @@ namespace FinanceManager.ViewModels
         public RelayCommand SortByCategoryCommand { get; }
         public RelayCommand SortByDateCommand { get; }
         public RelayCommand AddCategoryCommand { get; }
-        public RelayCommand DeleteCategoryCommand {  get; }
+        public RelayCommand DeleteCategoryCommand { get; }
         public RelayCommand EditBudgetCommand { get; }
         public RelayCommand AddRecurringTransactionCommand { get; }
         public RelayCommand DeleteRecurringTransactionCommand { get; }
+        public RelayCommand ExportReportCommand { get; }
+        public RelayCommand CreateReportCommand { get; }
         public MainViewModel()
         {
+            for (int i = 0; i < 12; i++)
+            {
+                var date = DateTime.Now.AddMonths(-i);
+                MonthOptions.Add($"{date:MMMM yyyy}");
+            }
+            SelectedMonth = MonthOptions.FirstOrDefault();
+
             categoryRepository.AddDefault();
             LoginCommand = new RelayCommand(OnLogin, () => CanLogin);
             RegisterCommand = new RelayCommand(OnRegister, () => CanRegister);
@@ -535,6 +622,8 @@ namespace FinanceManager.ViewModels
             EditBudgetCommand = new RelayCommand(OnEditBudget, () => CanEditBudget);
             AddRecurringTransactionCommand = new RelayCommand(OnAddRecurringTransaction, () => CanAddRecurringTransaction);
             DeleteRecurringTransactionCommand = new RelayCommand(OnDeleteRecurringTransaction, () => true);
+            ExportReportCommand = new RelayCommand(ExportReport, () => CanExportReport);
+            CreateReportCommand = new RelayCommand(CreateReport, () => true);
         }
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
@@ -543,6 +632,69 @@ namespace FinanceManager.ViewModels
         public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
         public bool CanEditBudget => !string.IsNullOrWhiteSpace(NewBudgetCountString);
         public bool CanAddRecurringTransaction => !string.IsNullOrWhiteSpace(RecurringTransactionAmountString) && !string.IsNullOrWhiteSpace(RecurringTransactionDescription) && !string.IsNullOrWhiteSpace(RecurringTransactionEndDateString);
+        public bool CanExportReport => !SelectedMonth.IsNullOrEmpty();
+
+        public int GetMonth(string monthName)
+        {
+            var months = new[] { "январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь" };
+            return Array.IndexOf(months, monthName) + 1;
+        }
+        public void CreateReport()
+        {
+            if (SelectedMonth.IsNullOrEmpty())
+            {
+                return;
+            }
+            var parts = SelectedMonth.Split(' ');
+            var month = GetMonth(parts[0]);
+            var year = int.Parse(parts[1]);
+            var start = new DateTime(year, month, 1, 0, 0, 0, DateTimeKind.Utc);
+            var end = start.AddMonths(1);
+            var transactions = _db.Transactions
+                .Where(x => x.UserId == UserId && x.Date >= start && x.Date <= end)
+                .Include(x => x.Category)
+                .OrderByDescending(x => x.Date)
+                .ToList();
+            MonthlyTransactions = transactions;
+            MonthlyIncome = transactions.Where(t => t.transactionType == TransactionType.Income).Sum(t => t.Amount);
+            MonthlyExpense = transactions.Where(t => t.transactionType == TransactionType.Expense).Sum(t => t.Amount);
+            MonthlyBalance = MonthlyIncome - MonthlyExpense;
+            OnPropertyChanged(nameof(MonthlyTransactions));
+            OnPropertyChanged(nameof(MonthlyIncome));
+            OnPropertyChanged(nameof(MonthlyExpense));
+            OnPropertyChanged(nameof(MonthlyBalance));
+        }
+
+        public async void ExportReport()
+        {
+            var mainWindow = Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime; // Получение главного окна
+            if (MonthlyTransactions == null || !MonthlyTransactions.Any())
+            {
+                return;
+            }
+            var dialog = new SaveFileDialog // Создание диалога сохранения окна
+            {
+                Title = "Сохранить отчёт",
+                DefaultExtension = "csv",
+                Filters = new List<FileDialogFilter> { new() { Name = "CSV", Extensions = { "csv" } } }
+            };
+            var path = await dialog.ShowAsync(mainWindow.MainWindow); // Открытие диалога
+            if (path.IsNullOrEmpty())
+            {
+
+            }
+            using var writer = new StreamWriter(path, false, Encoding.UTF8);
+            writer.WriteLine("Дата;Сумма;Описание;Тип;Категория");
+            foreach (var t in MonthlyTransactions)
+            {
+                writer.WriteLine($"{t.Date:dd.MM.yyyy};{t.Amount}₽;{t.Description};{(t.transactionType == TransactionType.Income ? "Доход" : "Расход")};{t.Category?.Name ?? "Без категории"}");
+            }
+            writer.WriteLine(";;;;");
+            writer.WriteLine($"Итого доходов;{MonthlyIncome}₽");
+            writer.WriteLine($"Итого расходов;{MonthlyExpense}₽");
+            writer.WriteLine($"Баланс;{MonthlyBalance}₽");
+        }
+
         public TransactionType GetTransactionType()
         {
             TransactionType transactionType;
@@ -592,13 +744,13 @@ namespace FinanceManager.ViewModels
                 NewBudgetCount = Convert.ToInt32(NewBudgetCountString);
             }
             catch { throw new Exception("Вы ввели некорректное число!"); }
-            var budget = _db.Budgets.FirstOrDefault();
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == UserId);
             budget.LimitAmount = NewBudgetCount;
             _db.Update(budget);
             _db.SaveChanges();
             NewBudgetCountString = "Успешно изменено!";
             BudgetCount = NewBudgetCount;
-            BudgetPercent = _db.Budgets.FirstOrDefault().GetProgressPercent();
+            BudgetPercent = _db.Budgets.FirstOrDefault(x => x.UserId == UserId).GetProgressPercent();
             OnPropertyChanged(nameof(BudgetPercent));
             OnPropertyChanged(nameof(BudgetCount));
             OnPropertyChanged(nameof(NewBudgetCountString));
@@ -607,7 +759,7 @@ namespace FinanceManager.ViewModels
         {
             RecurringTransactionTimer = new Timer(_ =>
             {
-                recurringTransactionRepository.RecurringPay();
+                recurringTransactionRepository.RecurringPay(UserId);
                 Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     LoadTransactions();
@@ -619,7 +771,7 @@ namespace FinanceManager.ViewModels
         }
         public void UpdateHasBudget()
         {
-            var budget = _db.Budgets.FirstOrDefault();
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == UserId);
             if (budget != null)
             {
                 HasBudget = true;
@@ -627,7 +779,7 @@ namespace FinanceManager.ViewModels
         }
         public void UpdateBudget()
         {
-            var budget = _db.Budgets.FirstOrDefault();
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == UserId);
             if (budget != null)
             {
                 BudgetCount = budget.LimitAmount;
@@ -642,15 +794,16 @@ namespace FinanceManager.ViewModels
         }
         public void LoadBudgetPercent()
         {
-            if (_db.Budgets.FirstOrDefault() != null)
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == UserId);
+            if (budget != null)
             {
-                BudgetPercent = _db.Budgets.FirstOrDefault().GetProgressPercent();
+                BudgetPercent = budget.GetProgressPercent();
                 OnPropertyChanged(nameof(BudgetPercent));
             }
         }
         public void UpdateBalance(int amount, TransactionType type)
         {
-            var user = _db.Users.FirstOrDefault();
+            var user = _db.Users.Find(UserId);
             if (type == TransactionType.Income)
             {
                 user.Balance += amount;
@@ -670,7 +823,7 @@ namespace FinanceManager.ViewModels
         }
         public void UpdateBudgetSpent(int amount)
         {
-            var budget = _db.Budgets.FirstOrDefault();
+            var budget = _db.Budgets.FirstOrDefault(x => x.UserId == UserId);
             if (budget != null)
             {
                 budget.SpentAmount += amount;
@@ -693,43 +846,56 @@ namespace FinanceManager.ViewModels
         }
         public void LoadTransactions()
         {
-            TransactionList = _db.Transactions.ToList();
+            TransactionList = _db.Transactions
+                .Where(x => x.UserId == UserId)
+                .ToList();
             OnPropertyChanged(nameof(TransactionList));
         }
         public void LoadRecurringTransactions()
         {
-            RecurringTransactionList = _db.RecurringTransactions.ToList();
+            RecurringTransactionList = _db.RecurringTransactions
+                .Where(x => x.UserId == UserId)
+                .ToList();
             OnPropertyChanged(nameof(RecurringTransactionList));
         }
         public void LoadStatus()
         {
-            BudgetStatus = budgetRepository.ChangeStatus();
+            BudgetStatus = budgetRepository.ChangeStatus(UserId);
             OnPropertyChanged(nameof(BudgetStatus));
         }
         public void LoadBalance()
         {
-            Balance = _db.Users.FirstOrDefault().Balance;
+            var user = _db.Users.Find(UserId);
+            if (user != null)
+            {
+                Balance = user.Balance;
+            }
             OnPropertyChanged(nameof(Balance));
         }
         public void CheckRecurringTransactionPeriod()
         {
             var recurringTransactions = _db.RecurringTransactions
-               .Where(r => r.IsActive == true)
+               .Where(r => r.IsActive == true && r.UserId == UserId)
                .ToList();
             foreach (var recurringTransaction in recurringTransactions)
             {
                 recurringTransactionRepository.ChangeStatusRecurringTransaction(recurringTransaction);
             }
         }
-        public void OnLogin()
+        public async void OnLogin()
         {
-            userRepository.Login(Login, Password);
+            var user = userRepository.Login(Login, Password);
+            if (user != null)
+            {
+                UserId = user.Id;
+                Balance = user.Balance;
+            }
             LoginPageVisible = false;
             HomePageVisible = true;
             OnPropertyChanged(nameof(LoginPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
             OnPropertyChanged(nameof(BudgetStatus));
-            recurringTransactionRepository.RecurringPay();
+            recurringTransactionRepository.RecurringPay(UserId);
             StartSubscriptionCheck();
             UpdateHasBudget();
             UpdateBudget();
@@ -740,13 +906,21 @@ namespace FinanceManager.ViewModels
             LoadBudgetPercent();
             LoadRecurringTransactions();
             CheckRecurringTransactionPeriod();
+            CreateReport();
         }
         public void OnRegister()
         {
-            userRepository.Register(Login, Password, Email);
+            var user = userRepository.Register(Login, Password, Email);
+            if (user != null)
+            {
+                UserId = user.Id;
+                Balance = user.Balance;
+            }
             RegisterPageVisible = false;
+            LoginPageVisible = false;
             HomePageVisible = true;
             OnPropertyChanged(nameof(RegisterPageVisible));
+            OnPropertyChanged(nameof(LoginPageVisible));
             OnPropertyChanged(nameof(HomePageVisible));
             UpdateHasBudget();
             UpdateBudget();
@@ -772,11 +946,11 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы ввели некорректное число!");
             }
-            if (_db.Budgets.Any())
+            if (_db.Budgets.Any(x => x.UserId == UserId))
             {
                 throw new Exception("У вас уже есть бюджет!");
             }
-            budgetRepository.AddBudget(BudgetCount, BudgetEndDate);
+            budgetRepository.AddBudget(UserId, BudgetCount, BudgetEndDate);
             HasBudget = true;
             BudgetSettingsPageVisible = false;
             BudgetCreatePageVisible = false;
@@ -802,7 +976,7 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            incomeRepository.AddIncome(TransactionAmount, TransactionDescription, SelectedCategory.Id);
+            incomeRepository.AddIncome(UserId, TransactionAmount, TransactionDescription, SelectedCategory.Id);
             UpdateBalance(TransactionAmount, TransactionType.Income);
             LoadTransactions();
             LoadStatus();
@@ -819,7 +993,7 @@ namespace FinanceManager.ViewModels
             }
             catch { throw new Exception("Вы ввели некорректное число или дату! (ДД.ММ.ГГГГ)"); }
             RecurringPeriod = GetRecurringPeriod();
-            recurringTransactionRepository.AddRecurringTransaction(RecurringTransactionAmount, RecurringTransactionDescription, RecurringPeriod, RecurringTransactionEndDate);
+            recurringTransactionRepository.AddRecurringTransaction(UserId, RecurringTransactionAmount, RecurringTransactionDescription, RecurringPeriod, RecurringTransactionEndDate);
             LoadRecurringTransactions();
         }
         public void OnDeleteRecurringTransaction()
@@ -854,7 +1028,11 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы не выбрали категорию!");
             }
-            expenseRepository.AddExpense(TransactionAmount, TransactionDescription, SelectedCategory.Id);
+            if (Balance - TransactionAmount < 0)
+            {
+                throw new Exception("Недостаточно средств на балансе!");
+            }
+            expenseRepository.AddExpense(UserId, TransactionAmount, TransactionDescription, SelectedCategory.Id);
             UpdateBalance(TransactionAmount, TransactionType.Expense);
             LoadTransactions();
             LoadStatus();
@@ -864,13 +1042,13 @@ namespace FinanceManager.ViewModels
         }
         public void OnSortByCategory()
         {
-            TransactionList = transactionRepository.SortByCategory();
+            TransactionList = transactionRepository.SortByCategory(UserId);
             OnPropertyChanged(nameof(TransactionList));
 
         }
         public void OnSortByDate()
         {
-            TransactionList = transactionRepository.SortByDate();
+            TransactionList = transactionRepository.SortByDate(UserId);
             OnPropertyChanged(nameof(TransactionList));
         }
         public void OnAddCategory()

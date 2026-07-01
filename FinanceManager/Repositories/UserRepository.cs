@@ -14,11 +14,10 @@ namespace FinanceManager.Repositories
         private readonly Database _db = new Database();
         public UserRepository()
         {
-            
+
         }
         public User Login(string username, string password)
         {
-            var hash = PasswordHasher.Hash(password);
             var user = _db.Users.FirstOrDefault(s => s.Name == username);
             if (user == null || !PasswordHasher.Verify(password, user.Password))
             {

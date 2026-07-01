@@ -16,10 +16,11 @@ namespace FinanceManager.Repositories
         {
 
         }
-        public Expense AddExpense(int amount, string description, int categoryId)
+        public Expense AddExpense(int userId, int amount, string description, int categoryId)
         {
             var expense = new Expense()
             {
+                UserId = userId,
                 Amount = amount,
                 Description = description,
                 Date = DateTime.UtcNow,
