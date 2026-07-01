@@ -44,7 +44,6 @@ namespace FinanceManager
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
-            HomePageButtons3.IsVisible = false;
             HomePageButtons4.IsVisible = false;
             AddIncomePage.IsVisible = false;
             AddExpensePage.IsVisible = false;
@@ -59,7 +58,6 @@ namespace FinanceManager
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
-            HomePageButtons3.IsVisible = false;
             HomePageButtons4.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
@@ -81,7 +79,6 @@ namespace FinanceManager
             HomePage.IsVisible = true;
             HomePageButtons.IsVisible = true;
             HomePageButtons2.IsVisible = true;
-            HomePageButtons3.IsVisible = true;
             HomePageButtons4.IsVisible = true;
             HomePageTransactionList.IsVisible = true;
             HomePageCategoryList.IsVisible = true;
@@ -120,7 +117,6 @@ namespace FinanceManager
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
-            HomePageButtons3.IsVisible = false;
             HomePageButtons4.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;
@@ -150,7 +146,6 @@ namespace FinanceManager
             HomePage.IsVisible = false;
             HomePageButtons.IsVisible = false;
             HomePageButtons2.IsVisible = false;
-            HomePageButtons3.IsVisible = false;
             HomePageButtons4.IsVisible = false;
             HomePageTransactionList.IsVisible = false;
             HomePageCategoryList.IsVisible = false;

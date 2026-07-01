@@ -2,259 +2,404 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:vm="using:FinanceManager.ViewModels"
-		xmlns:converters="clr-namespace:FinanceManager.Converters"
-	mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-	x:Class="FinanceManager.MainWindow"
-	x:DataType="vm:MainViewModel"
-	Title="FinanceManager"
-	Width="500"
-	Height="500">
+        xmlns:vm="using:FinanceManager.ViewModels"
+        xmlns:converters="clr-namespace:FinanceManager.Converters"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+        x:Class="FinanceManager.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="FinanceManager"
+        Width="900"
+        Height="600"
+        Background="#1E1E1E">
+
 	<Window.Resources>
 		<converters:ConvertToIcon x:Key="ConvertToIcon"/>
 		<converters:ConvertTransactionType x:Key="ConvertTransactionType"/>
 	</Window.Resources>
-	<Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*" ShowGridLines="true">
-		<StackPanel x:Name="LoginPanel" Grid.Column="1" Grid.Row="1" IsVisible="{Binding LoginPageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBlock Text="Вход" HorizontalAlignment="2" VerticalAlignment="2" FontSize="24"/>
+
+	<!-- ===== СТИЛИ ДЛЯ ТЁМНОЙ ТЕМЫ ===== -->
+	<Window.Styles>
+		<Style Selector="TextBlock">
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="Background" Value="#2D2D2D"/>
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+			<Setter Property="BorderBrush" Value="#444444"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="Margin" Value="0,5"/>
+		</Style>
+		<Style Selector="TextBox:focus-within">
+			<Setter Property="BorderBrush" Value="#6B6B6B"/>
+		</Style>
+		<Style Selector="Button">
+			<Setter Property="Background" Value="#3A3A3A"/>
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+			<Setter Property="BorderBrush" Value="#555555"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="14,10"/>
+			<Setter Property="Margin" Value="0,4"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="MinHeight" Value="36"/>
+		</Style>
+		<Style Selector="Button:pointerover">
+			<Setter Property="Background" Value="#4A4A4A"/>
+		</Style>
+		<Style Selector="Button:pressed">
+			<Setter Property="Background" Value="#2A2A2A"/>
+		</Style>
+		<Style Selector="ComboBox">
+			<Setter Property="Background" Value="#2D2D2D"/>
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+			<Setter Property="BorderBrush" Value="#444444"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="8"/>
+			<Setter Property="Margin" Value="0,5"/>
+			<Setter Property="MinHeight" Value="36"/>
+		</Style>
+		<Style Selector="ListBox">
+			<Setter Property="Background" Value="#252525"/>
+			<Setter Property="BorderBrush" Value="#444444"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="CornerRadius" Value="6"/>
+			<Setter Property="Padding" Value="5"/>
+			<Setter Property="MaxHeight" Value="200"/>
+		</Style>
+		<Style Selector="ListBoxItem">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+			<Setter Property="Padding" Value="8,6"/>
+			<Setter Property="CornerRadius" Value="4"/>
+			<Setter Property="MinHeight" Value="32"/>
+		</Style>
+		<Style Selector="ListBoxItem:pointerover">
+			<Setter Property="Background" Value="#3A3A3A"/>
+		</Style>
+		<Style Selector="ListBoxItem:selected">
+			<Setter Property="Background" Value="#4A4A4A"/>
+		</Style>
+		<Style Selector="RadioButton">
+			<Setter Property="Foreground" Value="#E0E0E0"/>
+			<Setter Property="Margin" Value="0,5"/>
+		</Style>
+		<Style Selector="Border">
+			<Setter Property="Background" Value="#2D2D2D"/>
+			<Setter Property="CornerRadius" Value="6"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid RowDefinitions="Auto, *, Auto" ColumnDefinitions="220, *, 220" Margin="10">
+
+		<!-- ===== ВХОД ===== -->
+		<StackPanel x:Name="LoginPanel" Grid.Column="1" Grid.Row="1" IsVisible="{Binding LoginPageVisible}" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="🔐 Вход" HorizontalAlignment="Center" FontSize="28" FontWeight="Bold" Foreground="#E0E0E0"/>
 			<TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<Button Content="Войти" HorizontalAlignment="2" Command="{Binding LoginCommand}"/>
-			<Button Content="Создать" HorizontalAlignment="2" Click="RegisterButton"/>
+			<TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PasswordChar="●"/>
+			<Button Content="Войти" HorizontalAlignment="Center" Command="{Binding LoginCommand}" Width="200"/>
+			<Button Content="Создать аккаунт" HorizontalAlignment="Center" Click="RegisterButton" Width="200"/>
 		</StackPanel>
-		<StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBlock Text="Создать" HorizontalAlignment="2" FontSize="24"/>
+
+		<!-- ===== РЕГИСТРАЦИЯ ===== -->
+		<StackPanel x:Name="RegisterPanel" Grid.Column="1" Grid.Row="1" IsVisible="False" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="📝 Создать аккаунт" HorizontalAlignment="Center" FontSize="28" FontWeight="Bold" Foreground="#E0E0E0"/>
 			<TextBox Watermark="Имя" Text="{Binding Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			<TextBox Watermark="Почта" Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			<Button Content="Зарегистрироваться" HorizontalAlignment="2" Command="{Binding RegisterCommand}" Click="HideRegisterPanel"/>
-			<Button Content="Отмена" HorizontalAlignment="2" Click="CancelRegisterButton"/>
+			<TextBox Watermark="Пароль" Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PasswordChar="●"/>
+			<Button Content="Зарегистрироваться" HorizontalAlignment="Center" Command="{Binding RegisterCommand}" Width="200"/>
+			<Button Content="Отмена" HorizontalAlignment="Center" Click="CancelRegisterButton" Width="200"/>
 		</StackPanel>
-		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="{Binding HomePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBlock Text="Финансы" HorizontalAlignment="2" FontSize="23"/>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Баланс: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding Balance, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
-			</StackPanel>
+
+		<!-- ===== ГЛАВНАЯ ===== -->
+		<StackPanel x:Name="HomePage" Grid.Column="1" Grid.Row="0" IsVisible="{Binding HomePageVisible}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,5">
+			<TextBlock Text="💳 Финансы" HorizontalAlignment="Center" FontSize="28" FontWeight="Bold" Foreground="#E0E0E0"/>
+			<TextBlock HorizontalAlignment="Center" FontSize="16" Foreground="#A0A0A0" Margin="0,2">
+				<Run Text="Привет, "/>
+				<Run Text="{Binding Login}"/>
+				<Run Text="!"/>
+			</TextBlock>
+			<Border Padding="15,8" Margin="0,5">
+				<StackPanel Orientation="Horizontal" Spacing="20">
+					<TextBlock Text="Баланс:" Foreground="#A0A0A0"/>
+					<TextBlock Text="{Binding Balance, StringFormat={}{0}₽}" Foreground="#4CAF50" FontWeight="Bold" FontSize="18"/>
+				</StackPanel>
+			</Border>
 		</StackPanel>
-		<StackPanel x:Name="HomePageButtons" Grid.Column="0" Grid.Row="2" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Добавить доход" HorizontalAlignment="2" Click="AddIncomeButton"/>
-			<Button Content="Добавить расход" HorizontalAlignment="2" Click="AddExpenseButton"/>
-			<Button Content="Настройки подписок" HorizontalAlignment="2" Click="RecurringTransactionSettingsButton"/>
-			<Button Content="Настроить бюджет" HorizontalAlignment="2" Click="BudgetSettingsButton"/>
+
+		<!-- ===== КНОПКИ ГЛАВНОЙ (ЛЕВАЯ КОЛОНКА) ===== -->
+		<StackPanel x:Name="HomePageButtons" Grid.Column="0" Grid.Row="2" IsVisible="{Binding HomePageVisible}" Spacing="4" VerticalAlignment="Bottom" Margin="0,5">
+			<Button Content="➕ Доход" Click="AddIncomeButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="➖ Расход" Click="AddExpenseButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="🔄 Подписки" Click="RecurringTransactionSettingsButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="💰 Бюджет" Click="BudgetSettingsButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="🏷️ Категории" Click="CategorySettingsButton" HorizontalAlignment="Stretch" MinHeight="36"/>
 		</StackPanel>
-		<StackPanel x:Name="HomePageButtons2" Grid.Column="2" Grid.Row="2" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Смотреть мес. отчёт" HorizontalAlignment="2" Click="ShowReportButton"/>
+
+		<!-- ===== КНОПКИ ГЛАВНОЙ (ПРАВАЯ КОЛОНКА) ===== -->
+		<StackPanel x:Name="HomePageButtons2" Grid.Column="2" Grid.Row="2" IsVisible="{Binding HomePageVisible}" VerticalAlignment="Bottom" Spacing="4" Margin="0,5">
+			<Button Content="📊 Отчёт" Click="ShowReportButton" HorizontalAlignment="Stretch" MinHeight="36"/>
 		</StackPanel>
-		<StackPanel x:Name="HomePageButtons3" Grid.Column="0" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<Button Content="Настроить категории" HorizontalAlignment="2" Click="CategorySettingsButton"/>
+
+		<!-- ===== СТАТИСТИКА БЮДЖЕТА ===== -->
+		<StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" IsVisible="{Binding HomePageVisible}" Spacing="4" HorizontalAlignment="Right" Margin="0,5">
+			<Border Padding="10,5" Margin="0,2" MinWidth="160">
+				<StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Бюджет:" Foreground="#A0A0A0" MinWidth="70"/>
+						<TextBlock Text="{Binding BudgetCount, StringFormat={}{0}₽}" Foreground="#E0E0E0"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Потрачено:" Foreground="#A0A0A0" MinWidth="70"/>
+						<TextBlock Text="{Binding BudgetPercent, StringFormat={}{0}%}" Foreground="#E0E0E0"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Статус:" Foreground="#A0A0A0" MinWidth="70"/>
+						<TextBlock Text="{Binding BudgetStatus}" Foreground="#E0E0E0"/>
+					</StackPanel>
+				</StackPanel>
+			</Border>
+			<Border Height="1" Background="#444444" Margin="0,5"/>
+			<Button Content="📅 По дате" Command="{Binding SortByDateCommand}" HorizontalAlignment="Stretch" MinHeight="32"/>
+			<Button Content="📂 По категории" Command="{Binding SortByCategoryCommand}" HorizontalAlignment="Stretch" MinHeight="32"/>
 		</StackPanel>
-		<StackPanel x:Name="HomePageButtons4" Grid.Column="2" Grid.Row="0" VerticalAlignment="3" HorizontalAlignment="2" IsVisible="{Binding HomePageVisible}">
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
-				<TextBlock Text="Ваш бюджет: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding BudgetCount, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
-				<TextBlock Text="Потрачено: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding BudgetPercent, StringFormat={}{0}%}" HorizontalAlignment="2"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="2">
-				<TextBlock Text="Сост. бюджета: " HorizontalAlignment="2"/>
-				<TextBlock Text="{Binding BudgetStatus}" HorizontalAlignment="2"/>
-			</StackPanel>
-			<Border Height="1" Background="Gray" Opacity="0.3" Margin="0,9"/>
-			<Button Content="Фильтр по дате" HorizontalAlignment="2" Command="{Binding SortByDateCommand}"/>
-			<Button Content="Фильтр по категории" HorizontalAlignment="2" Command="{Binding SortByCategoryCommand}"/>
-		</StackPanel>
-		<StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
-			<TextBlock Text="Доход" HorizontalAlignment="2" FontSize="23"/>
+
+		<!-- ===== ДОБАВИТЬ ДОХОД ===== -->
+		<StackPanel x:Name="AddIncomePage" IsVisible="False" Grid.Column="1" Grid.Row="1" Spacing="10" Width="320" VerticalAlignment="Center" HorizontalAlignment="Center">
+			<TextBlock Text="💰 Доход" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
 			<TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
 			<TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
-			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding IncomeCategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding IncomeCategoryList}" HorizontalAlignment="Stretch" MinHeight="36">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Icon}"/>
+							<TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
 						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddIncomeCommand}"/>
-			<Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
+			<Button Content="✅ Создать" Command="{Binding AddIncomeCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="❌ Отмена" Click="CancelTransactionButton" HorizontalAlignment="Stretch" MinHeight="36"/>
 		</StackPanel>
-		<ListBox x:Name="HomePageCategoryList" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="0" Grid.Row="1" IsVisible="{Binding HomePageVisible}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-					</StackPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-		<ListBox x:Name="HomePageTransactionList" ItemsSource="{Binding TransactionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Grid.Row="1" IsVisible="{Binding HomePageVisible}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Text="{Binding CategoryId, Converter={StaticResource ConvertToIcon}}" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding transactionType, Converter={StaticResource ConvertTransactionType}}" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Amount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0}₽ }" HorizontalAlignment="2"/>
-						<TextBlock Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0,0,0" HorizontalAlignment="2"/>
-					</StackPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-		<StackPanel x:Name="AddExpensePage" IsVisible="False" Grid.Column="1" Grid.Row="1">
-			<TextBlock Text="Расход" HorizontalAlignment="2" FontSize="23"/>
+
+		<!-- ===== ДОБАВИТЬ РАСХОД ===== -->
+		<StackPanel x:Name="AddExpensePage" IsVisible="False" Grid.Column="1" Grid.Row="1" Spacing="10" Width="320" VerticalAlignment="Center" HorizontalAlignment="Center">
+			<TextBlock Text="➖ Расход" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
 			<TextBox Watermark="Сумма" Text="{Binding TransactionAmountString}"/>
 			<TextBox Watermark="Описание" Text="{Binding TransactionDescription}"/>
-			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding ExpenseCategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
+			<ComboBox PlaceholderText="Категория..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding ExpenseCategoryList}" HorizontalAlignment="Stretch" MinHeight="36">
 				<ComboBox.ItemTemplate>
 					<DataTemplate>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
+							<TextBlock Text="{Binding Icon}"/>
+							<TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
 						</StackPanel>
 					</DataTemplate>
 				</ComboBox.ItemTemplate>
 			</ComboBox>
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddExpenseCommand}"/>
-			<Button Content="Отмена" HorizontalAlignment="2" Click="CancelTransactionButton"/>
+			<Button Content="✅ Создать" Command="{Binding AddExpenseCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="❌ Отмена" Click="CancelTransactionButton" HorizontalAlignment="Stretch" MinHeight="36"/>
 		</StackPanel>
-		<StackPanel x:Name="BudgetSettingsText" IsVisible="{Binding BudgetSettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
-			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
-			<TextBlock Text="бюджета" HorizontalAlignment="2" FontSize="23"/>
-		</StackPanel>
-		<StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<Button Content="Доб. бюджет" HorizontalAlignment="2" Click="AddBudgetButton" IsEnabled="{Binding !HasBudget}"/>
-			<Button Content="Изм. бюджет" HorizontalAlignment="2" IsEnabled="{Binding HasBudget}" Click="EditBudgetButton"/>
-		</StackPanel>
-		<StackPanel x:Name="BudgetCreatePage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetCreatePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBox Watermark="Размер бюджета" Text="{Binding BudgetCountString}"/>
-			<TextBlock Text="Дата окончания" HorizontalAlignment="2"/>
-			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}"/>
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding CreateBudgetCommand}" IsEnabled="{Binding !HasBudget}"/>
-		</StackPanel>
-		<StackPanel x:Name="BudgetEditPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding BudgetCreatePageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBlock Text="Новый размер бюджета" HorizontalAlignment="2"/>
-			<TextBox Watermark="Размер бюджета" HorizontalAlignment="2" Text="{Binding NewBudgetCountString}"/>
-			<Button Content="Изменить" Command="{Binding EditBudgetCommand}" HorizontalAlignment="2"/>
-		</StackPanel>
-		<StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2">
-			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
-		</StackPanel>
-		<StackPanel x:Name="CategorySettingsText" IsVisible="{Binding CategorySettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
-			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
-			<TextBlock Text="категорий" HorizontalAlignment="2" FontSize="23"/>
-		</StackPanel>
-		<StackPanel x:Name="CategorySettingsPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<Button Content="Доб. категорию" HorizontalAlignment="2" Click="AddCategoryButton"/>
-			<Button Content="Удал. категорию" HorizontalAlignment="2" Click="DeleteCategoryButton"/>
-		</StackPanel>
-		<StackPanel x:Name="AddCategoryPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<TextBox Watermark="Название" Text="{Binding CategoryName}"/>
-			<TextBox Watermark="Иконка" Text="{Binding Icon}"/>
-			<StackPanel Orientation="Horizontal">
-				<RadioButton Content="Доход" IsChecked="{Binding IsIncomeChecked}"/>
-				<RadioButton Content="Расход" IsChecked="{Binding IsExpenseChecked}"/>
-			</StackPanel>
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddCategoryCommand}"/>
-		</StackPanel>
-		<StackPanel x:Name="DeleteCategoryPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
-				<ComboBox.ItemTemplate>
-					<DataTemplate>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding TransactionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Icon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="4,0,0,0" HorizontalAlignment="2"/>
-							<TextBlock Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2"/>
-						</StackPanel>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
-			<Button Content="Удалить" HorizontalAlignment="2" Command="{Binding DeleteCategoryCommand}"/>
-		</StackPanel>
-		<StackPanel x:Name="CategorySettingsButtons" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="2">
-			<Button Content="Закрыть" HorizontalAlignment="2" Click="CloseSettingsButton"/>
-		</StackPanel>
-		<StackPanel x:Name="RecurringTransactionSettingsText" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
-			<TextBlock Text="Настройки" HorizontalAlignment="2" FontSize="23"/>
-			<TextBlock Text="подписок" HorizontalAlignment="2" FontSize="23"/>
-		</StackPanel>
-		<StackPanel x:Name="RecurringTransactionSettingsPage" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-			<Button Content="Доб. подписку" HorizontalAlignment="2" Click="AddRecurringTransactionButton"/>
-			<Button Content="Удал. подписку" HorizontalAlignment="2" Click="DeleteRecurringTransactionButton"/>
-		</StackPanel>
-		<StackPanel x:Name="RecurringTransactionCreatePage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" VerticalAlignment="2" HorizontalAlignment="2">
-			<TextBox Watermark="Стоимость" Text="{Binding RecurringTransactionAmountString}"/>
-			<TextBox Watermark="Описание" Text="{Binding RecurringTransactionDescription}"/>
-			<TextBlock Text="Дата окончания" HorizontalAlignment="2"/>
-			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding RecurringTransactionEndDateString}"/>
-			<TextBlock Text="Платёж" HorizontalAlignment="2"/>
-			<StackPanel Orientation="Horizontal" Spacing="8">
-               <RadioButton Content="День" IsChecked="{Binding IsDailyChecked}" FontSize="12"/>
-               <RadioButton Content="Неделя" IsChecked="{Binding IsWeeklyChecked}" FontSize="12"/>
-               <RadioButton Content="Месяц" IsChecked="{Binding IsMonthlyChecked}" FontSize="12"/>
-               <RadioButton Content="Год" IsChecked="{Binding IsYearlyChecked}" FontSize="12"/>
-            </StackPanel>
-			<Button Content="Создать" HorizontalAlignment="2" Command="{Binding AddRecurringTransactionCommand}"/>
-		</StackPanel>
-			<StackPanel x:Name="RecurringTransactionDeletePage" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="2">
-				<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedRecurringTransaction}" ItemsSource="{Binding RecurringTransactionList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="2">
-					<ComboBox.ItemTemplate>
-						<DataTemplate>
-							<StackPanel Orientation="Horizontal">
-								<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}" HorizontalAlignment="2"/>
-								<TextBlock Text="/" HorizontalAlignment="2"/>
-								<TextBlock Text="{Binding RecurringPeriod, StringFormat={}{0}}" HorizontalAlignment="2"/>
-								<TextBlock Text=" " HorizontalAlignment="2"/>
-								<TextBlock Text="{Binding Description}" HorizontalAlignment="2"/>
-							</StackPanel>
-						</DataTemplate>
-					</ComboBox.ItemTemplate>
-				</ComboBox>
-			<Button Content="Удалить" HorizontalAlignment="2" Command="{Binding DeleteRecurringTransactionCommand}"/>
-		</StackPanel>
-		<StackPanel x:Name="RecurringTransactionSettingsButtons" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="2" VerticalAlignment="2">
-			<Button Content="Закрыть" HorizontalAlignment="2" VerticalAlignment="2" Click="CloseSettingsButton"/>
-		</StackPanel>
-		<StackPanel x:Name="ReportPageText" IsVisible="{Binding ReportPageVisible}" VerticalAlignment="2" Grid.Column="1" Grid.Row="0">
-			<TextBlock Text="Просмотр" HorizontalAlignment="2" FontSize="23"/>
-			<TextBlock Text="Отчёта" HorizontalAlignment="2" FontSize="23"/>
-		</StackPanel>
-		<StackPanel x:Name="ReportPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding ReportPageVisible}">
-			<ListBox ItemsSource="{Binding MonthlyTransactions}">
+
+		<!-- ===== СПИСОК КАТЕГОРИЙ ===== -->
+		<StackPanel Grid.Column="0" Grid.Row="1" IsVisible="{Binding HomePageVisible}" Margin="0,5" VerticalAlignment="Top">
+			<TextBlock Text="📂 Категории" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
+			<ListBox x:Name="HomePageCategoryList" ItemsSource="{Binding CategoryList}" Background="#252525" BorderThickness="0" Height="150">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Grid ColumnDefinitions="Auto, *, Auto">
-							<TextBlock Grid.Column="0" Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}}"/>
-							<TextBlock Grid.Column="1" Text="{Binding Description}" Margin="10,0"/>
-							<TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat={}{0}₽}"/>
-						</Grid>
+						<StackPanel Orientation="Horizontal" Spacing="5">
+							<TextBlock Text="{Binding Icon}" FontSize="16"/>
+							<TextBlock Text="{Binding Name}" Foreground="#E0E0E0"/>
+						</StackPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>
 		</StackPanel>
-		<StackPanel x:Name="ReportStatsPage" Grid.Column="0" Grid.Row="1" VerticalAlignment="2" HorizontalAlignment="2" IsVisible="{Binding ReportPageVisible}">
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Доходы:" FontWeight="Bold"/>
-				<TextBlock Text="{Binding MonthlyIncome}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Расходы:" FontWeight="Bold"/>
-				<TextBlock Text="{Binding MonthlyExpense}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Баланс:" FontWeight="Bold"/>
-				<TextBlock Text="{Binding MonthlyBalance}"/>
+
+		<!-- ===== СПИСОК ТРАНЗАКЦИЙ ===== -->
+		<StackPanel Grid.Column="2" Grid.Row="1" IsVisible="{Binding HomePageVisible}" Margin="0,5">
+			<TextBlock Text="📋 Транзакции" Foreground="#A0A0A0" FontSize="12" Margin="0,2"/>
+			<ListBox x:Name="HomePageTransactionList" ItemsSource="{Binding TransactionList}" Background="#252525" BorderThickness="0" MaxHeight="180">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Background="#2D2D2D" CornerRadius="4" Padding="8,4" Margin="0,2">
+							<StackPanel Orientation="Horizontal" Spacing="10">
+								<TextBlock Text="{Binding CategoryId, Converter={StaticResource ConvertToIcon}}" FontSize="16"/>
+								<TextBlock Text="{Binding transactionType, Converter={StaticResource ConvertTransactionType}}" Foreground="#A0A0A0"/>
+								<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}" Foreground="#E0E0E0"/>
+								<TextBlock Text="{Binding Description}" Foreground="#888888"/>
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
+
+		<!-- ===== НАСТРОЙКИ БЮДЖЕТА ===== -->
+		<StackPanel x:Name="BudgetSettingsText" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5">
+			<TextBlock Text="💰 Настройки бюджета" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
+		</StackPanel>
+
+		<StackPanel x:Name="BudgetSettingsPage" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<Button Content="➕ Добавить бюджет" Click="AddBudgetButton" IsEnabled="{Binding !HasBudget}" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="✏️ Изменить бюджет" IsEnabled="{Binding HasBudget}" Click="EditBudgetButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="BudgetSettingsButtons" IsVisible="{Binding BudgetSettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
+			<Button Content="Закрыть" Click="CloseSettingsButton" Width="200" MinHeight="36"/>
+		</StackPanel>
+
+		<!-- ===== НАСТРОЙКИ КАТЕГОРИЙ ===== -->
+		<StackPanel x:Name="CategorySettingsText" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5">
+			<TextBlock Text="🏷️ Настройки категорий" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
+		</StackPanel>
+
+		<StackPanel x:Name="CategorySettingsPage" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<Button Content="➕ Добавить категорию" Click="AddCategoryButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="❌ Удалить категорию" Click="DeleteCategoryButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="CategorySettingsButtons" IsVisible="{Binding CategorySettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
+			<Button Content="Закрыть" Click="CloseSettingsButton" Width="200" MinHeight="36"/>
+		</StackPanel>
+
+		<!-- ===== НАСТРОЙКИ ПОДПИСОК ===== -->
+		<StackPanel x:Name="RecurringTransactionSettingsText" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5">
+			<TextBlock Text="🔄 Настройки подписок" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
+		</StackPanel>
+
+		<StackPanel x:Name="RecurringTransactionSettingsPage" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<Button Content="➕ Добавить подписку" Click="AddRecurringTransactionButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+			<Button Content="❌ Удалить подписку" Click="DeleteRecurringTransactionButton" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="RecurringTransactionSettingsButtons" IsVisible="{Binding RecurringTransactionSettingsPageVisible}" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
+			<Button Content="Закрыть" Click="CloseSettingsButton" Width="200" MinHeight="36"/>
+		</StackPanel>
+
+		<!-- ===== ОТЧЁТ ===== -->
+		<StackPanel x:Name="ReportPageText" IsVisible="{Binding ReportPageVisible}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" Margin="0,5">
+			<TextBlock Text="📊 Отчёт" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold" Foreground="#E0E0E0"/>
+		</StackPanel>
+
+		<StackPanel x:Name="ReportPage" Grid.Column="1" Grid.Row="1" IsVisible="{Binding ReportPageVisible}" Margin="0,5">
+			<ListBox ItemsSource="{Binding MonthlyTransactions}" Background="#252525" BorderThickness="0" MaxHeight="200">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Background="#2D2D2D" CornerRadius="4" Padding="8,4" Margin="0,2">
+							<Grid ColumnDefinitions="Auto, *, Auto">
+								<TextBlock Grid.Column="0" Text="{Binding Date, StringFormat={}{0:dd.MM.yyyy}}" Foreground="#A0A0A0"/>
+								<TextBlock Grid.Column="1" Text="{Binding Description}" Foreground="#E0E0E0" Margin="10,0"/>
+								<TextBlock Grid.Column="2" Text="{Binding Amount, StringFormat={}{0}₽}" Foreground="#E0E0E0"/>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
+
+		<StackPanel x:Name="ReportStatsPage" Grid.Column="0" Grid.Row="1" IsVisible="{Binding ReportPageVisible}" VerticalAlignment="Center" Margin="0,5">
+			<Border Padding="10,8" Background="#2D2D2D" CornerRadius="6" MinWidth="120">
+				<StackPanel Spacing="4">
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Доходы:" FontWeight="Bold" Foreground="#E0E0E0" MinWidth="65"/>
+						<TextBlock Text="{Binding MonthlyIncome}" Foreground="#4CAF50"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Расходы:" FontWeight="Bold" Foreground="#E0E0E0" MinWidth="65"/>
+						<TextBlock Text="{Binding MonthlyExpense}" Foreground="#EF5350"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="Баланс:" FontWeight="Bold" Foreground="#E0E0E0" MinWidth="65"/>
+						<TextBlock Text="{Binding MonthlyBalance}" Foreground="#42A5F5"/>
+					</StackPanel>
+				</StackPanel>
+			</Border>
+		</StackPanel>
+
+		<StackPanel x:Name="ReportPageButtons" Grid.Column="1" Grid.Row="2" IsVisible="{Binding ReportPageVisible}" HorizontalAlignment="Center" Spacing="10" Margin="0,5">
+			<ComboBox ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding SelectedMonth}" Width="150" MinHeight="32"/>
+			<StackPanel Orientation="Horizontal" Spacing="8">
+				<Button Content="Обновить" Command="{Binding CreateReportCommand}" MinHeight="32"/>
+				<Button Content="📥 CSV" Command="{Binding ExportReportCommand}" MinHeight="32"/>
+				<Button Content="Закрыть" Click="CloseSettingsButton" MinHeight="32"/>
 			</StackPanel>
 		</StackPanel>
-		<StackPanel x:Name="ReportPageButtons" Grid.Column="1" Grid.Row="2" IsVisible="{Binding ReportPageVisible}" VerticalAlignment="2">
-			<ComboBox ItemsSource="{Binding MonthOptions}" SelectedItem="{Binding SelectedMonth}" HorizontalAlignment="2"/>
-			<Button Content="Обновить" Command="{Binding CreateReportCommand}" HorizontalAlignment="2"/>
-			<Button Content="Экспорт CSV" Command="{Binding ExportReportCommand}" HorizontalAlignment="2"/>
-			<Button Content="Закрыть" Click="CloseSettingsButton" HorizontalAlignment="2"/>
+
+		<!-- ===== СКРЫТЫЕ СТРАНИЦЫ ===== -->
+		<StackPanel x:Name="BudgetCreatePage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="💰 Создать бюджет" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<TextBox Watermark="Размер бюджета" Text="{Binding BudgetCountString}"/>
+			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding BudgetEndDateString}"/>
+			<Button Content="Создать" Command="{Binding CreateBudgetCommand}" IsEnabled="{Binding !HasBudget}" HorizontalAlignment="Stretch" MinHeight="36"/>
 		</StackPanel>
+
+		<StackPanel x:Name="BudgetEditPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="✏️ Изменить бюджет" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<TextBox Watermark="Новый размер" Text="{Binding NewBudgetCountString}"/>
+			<Button Content="Изменить" Command="{Binding EditBudgetCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="AddCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="➕ Новая категория" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<TextBox Watermark="Название" Text="{Binding CategoryName}"/>
+			<TextBox Watermark="Иконка" Text="{Binding Icon}"/>
+			<StackPanel Orientation="Horizontal" Spacing="20" HorizontalAlignment="Center">
+				<RadioButton Content="Доход" IsChecked="{Binding IsIncomeChecked}" Foreground="#E0E0E0"/>
+				<RadioButton Content="Расход" IsChecked="{Binding IsExpenseChecked}" Foreground="#E0E0E0"/>
+			</StackPanel>
+			<Button Content="Создать" Command="{Binding AddCategoryCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="DeleteCategoryPage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="❌ Удалить категорию" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedCategory}" ItemsSource="{Binding CategoryList}" HorizontalAlignment="Stretch" MinHeight="36">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding TransactionType}"/>
+							<TextBlock Text="{Binding Icon}" Margin="5,0,0,0"/>
+							<TextBlock Text="{Binding Name}" Margin="5,0,0,0"/>
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Button Content="Удалить" Command="{Binding DeleteCategoryCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="RecurringTransactionCreatePage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="➕ Новая подписка" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<TextBox Watermark="Стоимость" Text="{Binding RecurringTransactionAmountString}"/>
+			<TextBox Watermark="Описание" Text="{Binding RecurringTransactionDescription}"/>
+			<TextBox Watermark="ДД.ММ.ГГГГ" Text="{Binding RecurringTransactionEndDateString}"/>
+			<StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+				<RadioButton Content="День" IsChecked="{Binding IsDailyChecked}" FontSize="12" Foreground="#E0E0E0"/>
+				<RadioButton Content="Неделя" IsChecked="{Binding IsWeeklyChecked}" FontSize="12" Foreground="#E0E0E0"/>
+				<RadioButton Content="Месяц" IsChecked="{Binding IsMonthlyChecked}" FontSize="12" Foreground="#E0E0E0"/>
+				<RadioButton Content="Год" IsChecked="{Binding IsYearlyChecked}" FontSize="12" Foreground="#E0E0E0"/>
+			</StackPanel>
+			<Button Content="Создать" Command="{Binding AddRecurringTransactionCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
+		<StackPanel x:Name="RecurringTransactionDeletePage" IsVisible="False" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10" Width="300">
+			<TextBlock Text="❌ Удалить подписку" FontSize="20" FontWeight="Bold" Foreground="#E0E0E0" HorizontalAlignment="Center"/>
+			<ComboBox PlaceholderText="Выберите..." SelectedItem="{Binding SelectedRecurringTransaction}" ItemsSource="{Binding RecurringTransactionList}" HorizontalAlignment="Stretch" MinHeight="36">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal">
+							<TextBlock Text="{Binding Amount, StringFormat={}{0}₽}"/>
+							<TextBlock Text="/" Margin="3,0"/>
+							<TextBlock Text="{Binding RecurringPeriod}"/>
+							<TextBlock Text=" " Margin="3,0"/>
+							<TextBlock Text="{Binding Description}"/>
+						</StackPanel>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+			<Button Content="Удалить" Command="{Binding DeleteRecurringTransactionCommand}" HorizontalAlignment="Stretch" MinHeight="36"/>
+		</StackPanel>
+
 	</Grid>
 </Window>

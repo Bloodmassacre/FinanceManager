@@ -299,6 +299,8 @@ namespace FinanceManager.ViewModels
             {
                 _selectedCategory = value;
                 OnPropertyChanged();
+                AddIncomeCommand.RaiseCanExecuteChanged();
+                AddExpenseCommand.RaiseCanExecuteChanged();
             }
         }
         public bool CategorySettingsPageVisible
@@ -628,7 +630,7 @@ namespace FinanceManager.ViewModels
         public bool CanLogin => !string.IsNullOrWhiteSpace(Login) && !string.IsNullOrWhiteSpace(Password);
         public bool CanRegister => !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Login) && Email.Contains("@");
         public bool CanCreateBudget => !string.IsNullOrWhiteSpace(BudgetCountString) && !string.IsNullOrWhiteSpace(BudgetEndDateString);
-        public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString);
+        public bool CanAddTransaction => !string.IsNullOrWhiteSpace(TransactionDescription) && !string.IsNullOrWhiteSpace(TransactionAmountString) && SelectedCategory != null;
         public bool CanAddCategory => !string.IsNullOrWhiteSpace(CategoryName) && !string.IsNullOrWhiteSpace(Icon);
         public bool CanEditBudget => !string.IsNullOrWhiteSpace(NewBudgetCountString);
         public bool CanAddRecurringTransaction => !string.IsNullOrWhiteSpace(RecurringTransactionAmountString) && !string.IsNullOrWhiteSpace(RecurringTransactionDescription) && !string.IsNullOrWhiteSpace(RecurringTransactionEndDateString);
@@ -972,10 +974,6 @@ namespace FinanceManager.ViewModels
             {
                 throw new Exception("Вы ввели некорректное число!");
             }
-            if (SelectedCategory == null)
-            {
-                throw new Exception("Вы не выбрали категорию!");
-            }
             incomeRepository.AddIncome(UserId, TransactionAmount, TransactionDescription, SelectedCategory.Id);
             UpdateBalance(TransactionAmount, TransactionType.Income);
             LoadTransactions();
@@ -1023,10 +1021,6 @@ namespace FinanceManager.ViewModels
             if (TransactionAmount <= 0)
             {
                 throw new Exception("Вы ввели некорректное число!");
-            }
-            if (SelectedCategory == null)
-            {
-                throw new Exception("Вы не выбрали категорию!");
             }
             if (Balance - TransactionAmount < 0)
             {
